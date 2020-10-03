@@ -51,6 +51,7 @@ public class UserDetailsImpl implements UserDetails {
                 authorities);
     }
 
+
     public String getUserLastName() {
         return userLastName;
     }

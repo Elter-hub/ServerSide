@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.example.demo.dto.request.EmailConfirmationRequest;
+import com.example.demo.models.ConfirmationToken;
 import com.example.demo.models.ERole;
 import com.example.demo.models.Role;
 import com.example.demo.models.User;
@@ -14,22 +16,24 @@ import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.SignupRequest;
 import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.repository.ConfirmationTokenRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtUtils;
+import com.example.demo.services.EmailSenderService;
 import com.example.demo.services.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -41,6 +45,12 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
+
+    @Autowired
+    private ConfirmationTokenRepository confirmationTokenRepository;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserRepository userRepository,RoleRepository roleRepository,
@@ -128,6 +138,32 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+        confirmationTokenRepository.save(confirmationToken);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom("ihor04@gmail.com");
+        mailMessage.setText("To confirm your account, please click here : "
+                +"http://localhost:4200/confirm?token="+confirmationToken.getConfirmationToken());
+
+        emailSenderService.sendEmail(mailMessage);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmUserAccount(@RequestBody EmailConfirmationRequest requestToken)
+    {
+        System.out.println(requestToken.getRequestParam());
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(requestToken.getRequestParam());
+        if(token != null)
+        {
+            User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
+            user.setEnabled(true);
+            userRepository.save(user);
+            return ResponseEntity.ok(new MessageResponse("Email ok"));
+        }
+        return ResponseEntity.ok(new MessageResponse("Email problem"));
     }
 }

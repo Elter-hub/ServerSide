@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -104,7 +105,7 @@ public class AuthController {
         User user = User.builder().userName(signUpRequest.getUserName()).userLastName(signUpRequest.getUserLastName())
                 .userNickName(signUpRequest.getUserNickName()).email(signUpRequest.getEmail())
                 .password(encoder.encode(signUpRequest.getPassword())).age(signUpRequest.getAge())
-                .sex(signUpRequest.getSex()).build();
+                .sex(signUpRequest.getSex()).tokenCreationDate(LocalDateTime.now()).createdDate(LocalDateTime.now()).build();
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();

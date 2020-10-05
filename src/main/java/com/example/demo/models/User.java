@@ -66,5 +66,9 @@ public class User {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime tokenCreationDate;
 
+    private String tokenForRecover;
+    private LocalDateTime createdDate;
+
+
     private boolean isEnabled;
 }

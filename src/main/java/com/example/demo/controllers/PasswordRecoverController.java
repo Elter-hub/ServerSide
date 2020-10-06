@@ -22,12 +22,13 @@ public class PasswordRecoverController {
     @PostMapping("/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody PasswordRecoverRequest email) {
         System.out.println("forgot password from passController");
-        return userRecoverPasswordService.forgotPassword(email.getEmail());
+        return userRecoverPasswordService.forgotPassword(email.getEmailForRecoveringPassword());
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<MessageResponse> resetPassword(@RequestBody PasswordRecoverRequest password) {
-        return ResponseEntity.ok(new MessageResponse("Tesssssssssssssst"));
-//        return userRecoverPasswordService.resetPassword(password.getTokenForRecoveringPassword(), password.getPassword());
+    public ResponseEntity<MessageResponse> resetPassword(@RequestBody PasswordRecoverRequest passwordRecoverRequest) {
+//        return ResponseEntity.ok(new MessageResponse("Tesssssssssssssst"));
+        return userRecoverPasswordService.resetPassword(passwordRecoverRequest.getTokenForRecoveringPassword(), passwordRecoverRequest.getPassword(),
+                passwordRecoverRequest.getEmailForRecoveringPassword());
     }
 }

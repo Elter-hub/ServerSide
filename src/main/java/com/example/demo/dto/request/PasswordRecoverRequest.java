@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class PasswordRecoverRequest {
     @NotBlank
-    private String email;
+    private String emailForRecoveringPassword;
 
     @NotBlank
     private String password;

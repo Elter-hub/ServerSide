@@ -9,5 +9,5 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class EmailConfirmationRequest {
     @NotBlank
-    private String requestParam;
+    private String emailConfirmationToken;
 }

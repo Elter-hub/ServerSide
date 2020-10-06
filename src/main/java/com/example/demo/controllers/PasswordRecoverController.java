@@ -6,6 +6,8 @@ import com.example.demo.services.UserRecoverPasswordService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/api")
 @RestController
@@ -18,13 +20,14 @@ public class PasswordRecoverController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<MessageResponse> forgotPassword(@RequestBody PasswordRecoverRequest email) {
+    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody PasswordRecoverRequest email) {
+        System.out.println("forgot password from passController");
         return userRecoverPasswordService.forgotPassword(email.getEmail());
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<MessageResponse> resetPassword(@RequestBody PasswordRecoverRequest password) {
-        System.out.println("Reset is invoked");
-        return userRecoverPasswordService.resetPassword(password.getTokenForRecoveringPassword(), password.getPassword());
+        return ResponseEntity.ok(new MessageResponse("Tesssssssssssssst"));
+//        return userRecoverPasswordService.resetPassword(password.getTokenForRecoveringPassword(), password.getPassword());
     }
 }

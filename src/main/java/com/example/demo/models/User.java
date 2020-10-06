@@ -63,10 +63,10 @@ public class User {
 
     private Set<Role> roles = new HashSet<>();
 
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime tokenCreationDate;
+//    @Column(columnDefinition = "TIMESTAMP")
+//    private LocalDateTime tokenCreationDate;
 
-    private String tokenForRecover;
+//    private String tokenForRecover;
     private LocalDateTime createdDate;
 
 

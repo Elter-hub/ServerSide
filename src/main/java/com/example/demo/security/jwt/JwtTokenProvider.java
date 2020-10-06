@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 
 @Component
-public class JwtUtils {
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+public class JwtTokenProvider {
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
@@ -25,8 +25,8 @@ public class JwtUtils {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         System.out.println("User principal " + userPrincipal);
-        System.out.println("User principal " + userPrincipal.getEmail());
-        System.out.println("User principal " + userPrincipal.getUsername());
+        System.out.println("User principal getEmail" + userPrincipal.getEmail());
+        System.out.println("User principal getUsername" + userPrincipal.getUsername());
 
         return Jwts.builder()
                 .setSubject((userPrincipal.getEmail()))

@@ -25,17 +25,15 @@ public class UserRecoverPasswordService {
     private final UserRepository userRepository;
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final PasswordRecoverTokenRepository passwordRecoverTokenRepository;
 
     public UserRecoverPasswordService(UserRepository userRepository,
                                       EmailSenderService emailSenderService,
                                       PasswordEncoder passwordEncoder,
-                                      EmailConfirmationTokenRepository emailConfirmationTokenRepository, PasswordRecoverTokenRepository passwordRecoverTokenRepository) {
+                                      PasswordRecoverTokenRepository passwordRecoverTokenRepository) {
         this.userRepository = userRepository;
         this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
-        this.emailConfirmationTokenRepository = emailConfirmationTokenRepository;
         this.passwordRecoverTokenRepository = passwordRecoverTokenRepository;
     }
 
@@ -65,7 +63,7 @@ public class UserRecoverPasswordService {
         mailMessage.setSubject("Password recovering ");
         mailMessage.setFrom("ihor04@gmail.com");
         mailMessage.setText("To recover password please click in the link below  : "
-                + "http://localhost:4200/forgot-password/change-password?token=" + tokenForPasswordRecover
+                + "http://localhost:4200/change-password?token=" + tokenForPasswordRecover
                 + "&email=" + user.getEmail());
 
         emailSenderService.sendEmail(mailMessage);
@@ -118,9 +116,6 @@ public class UserRecoverPasswordService {
         passwordRecoverToken.setPasswordRecoverToken(null);
         passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(null);
         userRepository.save(user);
-        System.out.println("" +
-                "4545" +
-                "545");
         System.out.println(user.toString());
 
         return ResponseEntity.ok(new MessageResponse("Your password successfully updated."));
@@ -133,10 +128,8 @@ public class UserRecoverPasswordService {
      * @return true or false
      */
     private boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
-
         LocalDateTime now = LocalDateTime.now();
         Duration diff = Duration.between(tokenCreationDate, now);
-
         return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES;
     }
 }

@@ -27,7 +27,8 @@ public class PasswordRecoverController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<MessageResponse> resetPassword(@RequestBody PasswordRecoverRequest passwordRecoverRequest) {
-        return userRecoverPasswordService.resetPassword(passwordRecoverRequest.getTokenForRecoveringPassword(), passwordRecoverRequest.getPassword(),
-                passwordRecoverRequest.getEmailForRecoveringPassword());
+        return userRecoverPasswordService.resetPassword(passwordRecoverRequest.getTokenForRecoveringPassword(),
+                                                        passwordRecoverRequest.getPassword(),
+                                                        passwordRecoverRequest.getEmailForRecoveringPassword());
     }
 }

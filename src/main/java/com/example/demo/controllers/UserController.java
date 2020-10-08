@@ -8,6 +8,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.security.CurrentUser;
 import com.example.demo.services.UserChangePasswordService;
 import com.example.demo.services.UserDetailsImpl;
+import com.example.demo.services.UserRecoverPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +22,11 @@ public class UserController {
     private UserRepository userRepository;
 
     private final UserChangePasswordService userChangePasswordService;
+    private final UserRecoverPasswordService userRecoverPasswordService;
 
-    public UserController(UserChangePasswordService userChangePasswordService) {
+    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService) {
         this.userChangePasswordService = userChangePasswordService;
+        this.userRecoverPasswordService = userRecoverPasswordService;
     }
 
     @GetMapping("/me")
@@ -35,9 +38,14 @@ public class UserController {
 
     @PostMapping("/change-password")
     public ResponseEntity<MessageResponse> checkUserOldPassword(@RequestBody PasswordRecoverRequest userChangePasswordRequest){
-
-        userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getEmailForRecoveringPassword(), userChangePasswordRequest.getPassword());
-//        userChangePasswordService.setNewPasswordAfterEmailConfirmation()
+        userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getEmailForRecoveringPassword(),
+                                                           userChangePasswordRequest.getPassword());
+        userRecoverPasswordService.forgotPassword(userChangePasswordRequest.getEmailForRecoveringPassword());
+        userRecoverPasswordService.resetPassword(userChangePasswordRequest.getTokenForRecoveringPassword(),
+                                                 userChangePasswordRequest.getPassword(),
+                                                 userChangePasswordRequest.getEmailForRecoveringPassword());
         return ResponseEntity.ok(new MessageResponse("Please Check your email to confirm changing password"));
     }
+
+
 }

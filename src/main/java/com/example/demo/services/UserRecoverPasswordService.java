@@ -38,14 +38,11 @@ public class UserRecoverPasswordService {
     }
 
     public ResponseEntity<MessageResponse> forgotPassword(String email) {
-        System.out.println("FOrgotPassword method starts");
-        System.out.println(email + "🌈🌈🌈🌈🌈🌈🌈🌈🌈");
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(email));
         if (!userOptional.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email doesnt exist!"));
         }
-        System.out.println("After checking user");
 
         User user = userOptional.get();
 
@@ -82,15 +79,11 @@ public class UserRecoverPasswordService {
     }
 
     public ResponseEntity<MessageResponse> resetPassword(String token, String password, String emailForRecoveringPassword) {
-        System.out.println("Reset password " + token + " " + password);
-
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(emailForRecoveringPassword));
         if (!userOptional.isPresent()) {
-            System.out.println("Reset Optional " + userOptional.get());
             return ResponseEntity.ok(new MessageResponse("Invalid Tokenss"));
         }
-        System.out.println("User 🩳 " + userOptional.get());
 
         Optional<PasswordRecoverToken> passwordTokenOptional = Optional
                 .ofNullable(passwordRecoverTokenRepository.findByPasswordRecoverToken(token));
@@ -98,7 +91,6 @@ public class UserRecoverPasswordService {
         if (!passwordTokenOptional.isPresent()) {
             return ResponseEntity.ok(new MessageResponse("Invalid E Token"));
         }
-        System.out.println("password 🩹 " + passwordTokenOptional.get());
 
         LocalDateTime tokenCreationDate = passwordTokenOptional.get().getPasswordConfirmationTokenCreatedDate();
 
@@ -114,7 +106,7 @@ public class UserRecoverPasswordService {
         passwordRecoverToken.setPasswordRecoverToken(null);
         passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(null);
         userRepository.save(user);
-        System.out.println(user.toString());
+        System.out.println("User from reset " + user.toString());
 
         return ResponseEntity.ok(new MessageResponse("Your password successfully updated."));
     }

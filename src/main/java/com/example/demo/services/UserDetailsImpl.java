@@ -2,17 +2,21 @@ package com.example.demo.services;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.example.demo.models.User;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class UserDetailsImpl implements UserDetails {
+@ToString
+public class UserDetailsImpl implements OAuth2User, UserDetails {
     private static final long serialVersionUID = 1L;
     private final Long id;
     private final String username;
@@ -20,8 +24,9 @@ public class UserDetailsImpl implements UserDetails {
     private final String userLastName;
     private final Integer age;
 
-    @JsonIgnore
+//    @JsonIgnore
     private final String password;
+    private Map<String, Object> attributes;
 
     private final Collection<? extends GrantedAuthority> authorities;
 
@@ -49,6 +54,12 @@ public class UserDetailsImpl implements UserDetails {
                 user.getAge(),
                 user.getPassword(),
                 authorities);
+    }
+
+    public static UserDetailsImpl build(User user, Map<String, Object> attributes) {
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+        userDetails.setAttributes(attributes);
+        return userDetails;
     }
 
 
@@ -83,7 +94,14 @@ public class UserDetailsImpl implements UserDetails {
         return username;
     }
 
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -114,4 +132,8 @@ public class UserDetailsImpl implements UserDetails {
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
+
+    @Override
+    public String getName() {
+        return String.valueOf(id);    }
 }

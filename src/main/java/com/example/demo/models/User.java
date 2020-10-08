@@ -37,6 +37,7 @@ public class User {
     @Column(unique = true)
     private String userNickName;
 
+
     @NotBlank
     @Size(max = 50)
     @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b")
@@ -63,12 +64,16 @@ public class User {
 
     private Set<Role> roles = new HashSet<>();
 
-//    @Column(columnDefinition = "TIMESTAMP")
-//    private LocalDateTime tokenCreationDate;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
-//    private String tokenForRecover;
+    private String providerId;
+
     private LocalDateTime createdDate;
 
 
     private boolean isEnabled;
+
+    private String imageUrl;
 }

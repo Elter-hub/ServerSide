@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -84,23 +86,17 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        System.out.println("signup starts 🥴" );
-        if (userRepository.existsByUserName(signUpRequest.getUserName())) {
-            System.out.println(signUpRequest.getUserName() + "👨‍💻");
+        if (userRepository.existsByUserNickName(signUpRequest.getUserNickName())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Error: User Nick name is already taken!"));
         }
-        System.out.println("After Checking userRepository by username ");
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
-        System.out.println("After Checking userRepository by email ");
-
-
 
         // Create new user's account
         User user = User.builder().userName(signUpRequest.getUserName())
@@ -144,7 +140,12 @@ public class AuthController {
             });
         }
         user.setRoles(roles);
-        userRepository.save(user);
+        User result = userRepository.save(user);
+
+        //OAuth2
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/user/me")
+                .buildAndExpand(result.getId()).toUri();
 
         EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(user);
         emailConfirmationTokenRepository.save(emailConfirmationToken);

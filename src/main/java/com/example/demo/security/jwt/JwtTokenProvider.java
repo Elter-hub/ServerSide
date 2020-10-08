@@ -27,7 +27,12 @@ public class JwtTokenProvider {
         System.out.println("User principal " + userPrincipal);
         System.out.println("User principal getEmail" + userPrincipal.getEmail());
         System.out.println("User principal getUsername" + userPrincipal.getUsername());
-
+        System.out.println("jwt BUILDER" + Jwts.builder()
+                .setSubject((userPrincipal.getEmail()))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact());
         return Jwts.builder()
                 .setSubject((userPrincipal.getEmail()))
                 .setIssuedAt(new Date())
@@ -36,7 +41,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 

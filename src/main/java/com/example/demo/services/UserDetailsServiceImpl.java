@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +21,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = Optional.ofNullable(userRepository.findByEmailIgnoreCase(username))
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
+        User user = Optional.ofNullable(userRepository.findByEmailIgnoreCase(userEmail))
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userEmail));
         return UserDetailsImpl.build(user);
     }
 
+    @Transactional
+    public UserDetails loadUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id)
+        );
+
+        return UserDetailsImpl.build(user);
+    }
 }

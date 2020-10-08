@@ -48,15 +48,13 @@ public class UserRecoverPasswordService {
         System.out.println("After checking user");
 
         User user = userOptional.get();
-        System.out.println(user + "👨‍🦲");
+
         PasswordRecoverToken passwordRecoverToken = new PasswordRecoverToken(user);
         String tokenForPasswordRecover = generateToken();
         passwordRecoverToken.setPasswordRecoverToken(tokenForPasswordRecover);
         passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(LocalDateTime.now());
         passwordRecoverToken.setUserEmailForPasswordRecovering(user.getEmail());
-        System.out.println("TOken for recover 🧮" + passwordRecoverToken);
         passwordRecoverTokenRepository.save(passwordRecoverToken);
-        System.out.println("TOken for recover 🧮" + passwordRecoverToken.getPasswordRecoverToken());
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());

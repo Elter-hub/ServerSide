@@ -41,11 +41,14 @@ public class UserController {
         userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getEmailForRecoveringPassword(),
                                                            userChangePasswordRequest.getPassword());
         userRecoverPasswordService.forgotPassword(userChangePasswordRequest.getEmailForRecoveringPassword());
-        userRecoverPasswordService.resetPassword(userChangePasswordRequest.getTokenForRecoveringPassword(),
-                                                 userChangePasswordRequest.getPassword(),
-                                                 userChangePasswordRequest.getEmailForRecoveringPassword());
         return ResponseEntity.ok(new MessageResponse("Please Check your email to confirm changing password"));
     }
 
-
+//    @PostMapping("/reset-password")
+//    public ResponseEntity<MessageResponse> userSetNewPassword(@RequestBody PasswordRecoverRequest userChangePasswordRequest) {
+//        userRecoverPasswordService.resetPassword(userChangePasswordRequest.getTokenForRecoveringPassword(),
+//                userChangePasswordRequest.getPassword(),
+//                userChangePasswordRequest.getEmailForRecoveringPassword());
+//        return ResponseEntity.ok(new MessageResponse("New password"));
+//    }
 }

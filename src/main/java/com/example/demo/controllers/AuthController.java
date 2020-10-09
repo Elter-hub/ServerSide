@@ -143,9 +143,9 @@ public class AuthController {
         User result = userRepository.save(user);
 
         //OAuth2
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
+//        URI location = ServletUriComponentsBuilder
+//                .fromCurrentContextPath().path("/user/me")
+//                .buildAndExpand(result.getId()).toUri();
 
         EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(user);
         emailConfirmationTokenRepository.save(emailConfirmationToken);

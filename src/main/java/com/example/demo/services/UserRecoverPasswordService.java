@@ -105,6 +105,7 @@ public class UserRecoverPasswordService {
         user.setPassword(passwordEncoder.encode(password));
         passwordRecoverToken.setPasswordRecoverToken(null);
         passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(null);
+        passwordRecoverToken.setUserEmailForPasswordRecovering(null);
         userRepository.save(user);
         System.out.println("User from reset " + user.toString());
 

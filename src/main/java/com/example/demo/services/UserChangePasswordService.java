@@ -24,12 +24,9 @@ public class UserChangePasswordService {
     public ResponseEntity<MessageResponse> checkOldPasswordValidity(String userEmail, String userOldPassword) {
         //User always exists cause its logged in!
         User user = userRepository.findByEmailIgnoreCase(userEmail);
-        if (BCrypt.checkpw(userOldPassword, user.getPassword())){
-        }else {
+        if (!BCrypt.checkpw(userOldPassword, user.getPassword())) {
             return ResponseEntity.ok(new MessageResponse("The old password which u entered dont match"));
         }
-
-
         return ResponseEntity.ok(new MessageResponse("Password Matches........"));
     }
 }

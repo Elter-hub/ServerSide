@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,9 +19,19 @@ public class EmailConfirmationToken {
     private long emailTokenId;
 
     @NotBlank
+    @Column(name = "token")
     private String emailConfirmationToken;
 
+    @NotBlank
+    @Column(name = "userEmail")
+    private String emailConfirmationTokenUserEmail;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private EToken tokenType = EToken.E;
+
     @CreatedDate
+    @Column(name = "date")
     private LocalDateTime emailConfirmationTokenCreatedDate;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -29,6 +40,7 @@ public class EmailConfirmationToken {
 
     public EmailConfirmationToken(User user) {
         this.user = user;
+        emailConfirmationTokenUserEmail = user.getEmail();
         emailConfirmationTokenCreatedDate = LocalDateTime.now();
         emailConfirmationToken = UUID.randomUUID().toString();
     }

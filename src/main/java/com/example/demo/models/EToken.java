@@ -2,8 +2,8 @@ package com.example.demo.models;
 
 public enum EToken {
     JWT_TOKEN("JsonWebToken"),
-    EMAIL_CONFIRM_TOKEN("EmailConfirmationToken"),
-    PASSWORD_RECOVER_TOKEN("TokenForRecoveringPassword");
+    E("EmailConfirmationToken"),
+    P("TokenForRecoveringPassword");
 
     EToken(String tokenMessage) {
         this.tokenMessage = tokenMessage;

@@ -1,11 +1,11 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.models.EmailConfirmationToken;
 import com.example.demo.models.PasswordRecoverToken;
+import com.example.demo.models.TokenActions;
 import com.example.demo.models.User;
-import com.example.demo.repository.EmailConfirmationTokenRepository;
 import com.example.demo.repository.PasswordRecoverTokenRepository;
+import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,25 +26,29 @@ public class UserRecoverPasswordService {
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final PasswordRecoverTokenRepository passwordRecoverTokenRepository;
+    private final TokenActionsRepository tokenActionsRepository;
 
     public UserRecoverPasswordService(UserRepository userRepository,
                                       EmailSenderService emailSenderService,
                                       PasswordEncoder passwordEncoder,
-                                      PasswordRecoverTokenRepository passwordRecoverTokenRepository) {
+                                      PasswordRecoverTokenRepository passwordRecoverTokenRepository, TokenActionsRepository tokenActionsRepository) {
         this.userRepository = userRepository;
         this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
         this.passwordRecoverTokenRepository = passwordRecoverTokenRepository;
+        this.tokenActionsRepository = tokenActionsRepository;
     }
 
     public ResponseEntity<MessageResponse> forgotPassword(String email) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(email));
         if (!userOptional.isPresent()) {
+            System.out.println("🦮🦮🦮🦮🦮");
             return ResponseEntity.badRequest().body(new MessageResponse("Email doesnt exist!"));
         }
-
         User user = userOptional.get();
+        Optional<TokenActions> tokenActionsByUserIdOptional = tokenActionsRepository.findByUserId(user.getId());
+
 
         PasswordRecoverToken passwordRecoverToken = new PasswordRecoverToken(user);
         String tokenForPasswordRecover = generateToken();
@@ -52,6 +56,13 @@ public class UserRecoverPasswordService {
         passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(LocalDateTime.now());
         passwordRecoverToken.setUserEmailForPasswordRecovering(user.getEmail());
         passwordRecoverTokenRepository.save(passwordRecoverToken);
+
+        if (tokenActionsByUserIdOptional.isPresent()){
+            tokenActionsByUserIdOptional.get().setPasswordRecoverToken(tokenForPasswordRecover);
+        tokenActionsRepository.save(tokenActionsByUserIdOptional.get());
+        }else {
+            tokenActionsRepository.save(new TokenActions(passwordRecoverToken, user));
+        }
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());

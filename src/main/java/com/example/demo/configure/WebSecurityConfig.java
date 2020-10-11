@@ -2,10 +2,6 @@ package com.example.demo.configure;
 
 import com.example.demo.security.jwt.AuthEntryPointJwt;
 import com.example.demo.security.jwt.AuthTokenFilter;
-import com.example.demo.security.oauth2.CustomOAuth2UserService;
-import com.example.demo.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.example.demo.security.oauth2.OAuth2AuthenticationFailureHandler;
-import com.example.demo.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.example.demo.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,24 +29,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
 
     private final AuthEntryPointJwt unauthorizedHandler;
-
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    @Autowired
-    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
-
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
 
     public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
         this.userDetailsService = userDetailsService;
@@ -93,22 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/auth/**").permitAll()
                     .antMatchers("/api/forgot-password").permitAll()
                     .antMatchers("/api/reset-password").permitAll()
-                    .antMatchers("/api/test/**").permitAll()
                     .anyRequest().authenticated();
-//                .and()
-//                    .oauth2Login()
-//                    .authorizationEndpoint()
-//                    .baseUri("/oauth2/authorize")
-//                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-//                .and()
-//                    .redirectionEndpoint()
-//                    .baseUri("/oauth2/callback/*")
-//                .and()
-//                    .userInfoEndpoint()
-//                    .userService(customOAuth2UserService)
-//                .and()
-//                    .successHandler(oAuth2AuthenticationSuccessHandler)
-//                    .failureHandler(oAuth2AuthenticationFailureHandler);;
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

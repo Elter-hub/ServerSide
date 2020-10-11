@@ -28,6 +28,7 @@ public class EmailConfirmationToken {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private EToken tokenType = EToken.E;
 
     @CreatedDate

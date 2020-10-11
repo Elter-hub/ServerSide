@@ -43,8 +43,8 @@ public class UserRecoverPasswordService {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(email));
         if (!userOptional.isPresent()) {
-            System.out.println("🦮🦮🦮🦮🦮");
-            return ResponseEntity.badRequest().body(new MessageResponse("Email doesnt exist!"));
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Email doesnt exist!"));
         }
         User user = userOptional.get();
         Optional<TokenActions> tokenActionsByUserIdOptional = tokenActionsRepository.findByUserId(user.getId());
@@ -93,21 +93,19 @@ public class UserRecoverPasswordService {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(emailForRecoveringPassword));
         if (!userOptional.isPresent()) {
-            return ResponseEntity.ok(new MessageResponse("Invalid Tokenss"));
+            return ResponseEntity.badRequest().body(new MessageResponse("User with provided email doesnt exist!"));
         }
 
         Optional<PasswordRecoverToken> passwordTokenOptional = Optional
                 .ofNullable(passwordRecoverTokenRepository.findByPasswordRecoverToken(token));
-        System.out.println("");
         if (!passwordTokenOptional.isPresent()) {
-            return ResponseEntity.ok(new MessageResponse("Invalid E Token"));
+            return ResponseEntity.badRequest().body(
+                    new MessageResponse("You already changed password. Invalid Token"));
         }
 
         LocalDateTime tokenCreationDate = passwordTokenOptional.get().getPasswordConfirmationTokenCreatedDate();
-
         if (isTokenExpired(tokenCreationDate)) {
-            System.out.println("Is token expired  ");
-            return ResponseEntity.ok(new MessageResponse("Token Expired"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Token Expired"));
         }
 
         User user = userOptional.get();

@@ -2,16 +2,11 @@ package com.example.demo.controllers;
 
 import com.example.demo.dto.request.PasswordRecoverRequest;
 import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.CurrentUser;
 import com.example.demo.services.UserChangePasswordService;
-import com.example.demo.services.UserDetailsImpl;
 import com.example.demo.services.UserRecoverPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/user")
@@ -29,26 +24,18 @@ public class UserController {
         this.userRecoverPasswordService = userRecoverPasswordService;
     }
 
-    @GetMapping("/me")
-    @PreAuthorize("hasRole('USER')")
-    public User getCurrentUser(@CurrentUser UserDetailsImpl userDetails) {
-        return userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userDetails.getId()));
-    }
-
     @PostMapping("/change-password")
     public ResponseEntity<MessageResponse> checkUserOldPassword(@RequestBody PasswordRecoverRequest userChangePasswordRequest){
-        userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getEmailForRecoveringPassword(),
-                                                           userChangePasswordRequest.getPassword());
-        userRecoverPasswordService.forgotPassword(userChangePasswordRequest.getEmailForRecoveringPassword());
-        return ResponseEntity.ok(new MessageResponse("Please Check your email to confirm changing password"));
+        ResponseEntity<MessageResponse> validity = userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getEmailForRecoveringPassword(),
+                userChangePasswordRequest.getPassword());
+        return validity.getStatusCodeValue() == 400
+                ? ResponseEntity.badRequest().body(new MessageResponse("Old password is incorrect"))
+                : userRecoverPasswordService.forgotPassword(userChangePasswordRequest.getEmailForRecoveringPassword());
     }
 
-//    @PostMapping("/reset-password")
-//    public ResponseEntity<MessageResponse> userSetNewPassword(@RequestBody PasswordRecoverRequest userChangePasswordRequest) {
-//        userRecoverPasswordService.resetPassword(userChangePasswordRequest.getTokenForRecoveringPassword(),
-//                userChangePasswordRequest.getPassword(),
-//                userChangePasswordRequest.getEmailForRecoveringPassword());
-//        return ResponseEntity.ok(new MessageResponse("New password"));
-//    }
+    @PostMapping("change-image")
+    public ResponseEntity<MessageResponse> changeUserImageUrl(@RequestBody String url){
+
+        return ResponseEntity.ok(new MessageResponse("Url is changed"));
+    }
 }

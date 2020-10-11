@@ -17,7 +17,7 @@ import java.util.UUID;
 public class UserChangePasswordService {
     private final UserRepository userRepository;
 
-    public UserChangePasswordService(UserRepository userRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder, PasswordRecoverTokenRepository passwordRecoverTokenRepository) {
+    public UserChangePasswordService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -25,7 +25,7 @@ public class UserChangePasswordService {
         //User always exists cause its logged in!
         User user = userRepository.findByEmailIgnoreCase(userEmail);
         if (!BCrypt.checkpw(userOldPassword, user.getPassword())) {
-            return ResponseEntity.ok(new MessageResponse("The old password which u entered dont match"));
+            return ResponseEntity.badRequest().body(new MessageResponse("The old password which u entered dont match"));
         }
         return ResponseEntity.ok(new MessageResponse("Password Matches........"));
     }

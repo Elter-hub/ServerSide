@@ -27,6 +27,7 @@ public class PasswordRecoverToken {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private EToken tokenType = EToken.P;
 
     @CreatedDate

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,14 +33,11 @@ public class User {
     private String userLastName;
 
     @NotBlank
-    @Column(unique = true)
     private String userNickName;
-
 
     @NotBlank
     @Size(max = 50)
     @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b")
-    @Column(unique = true)
     private String email;
 
     @NotBlank
@@ -62,10 +58,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
 
     private String providerId;
 

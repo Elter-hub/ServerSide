@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 @Getter
@@ -22,14 +21,14 @@ public class SignupRequest {
     private String userLastName;
 
     @NotBlank
-    @Column(unique = true)
+//    @Column(unique = true)
     private String userNickName;
 
     @NotBlank
     @Size(max = 50)
 //    @Email  Shit like me@mail not allowed
     @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b")
-    @Column(unique = true)
+//    @Column(unique = true)  // when creating an Object it's check for duplicates
     private String email;
 
     @JsonIgnore // not sure

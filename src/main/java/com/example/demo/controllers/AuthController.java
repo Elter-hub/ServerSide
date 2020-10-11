@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -140,14 +142,8 @@ public class AuthController {
         user.setRoles(roles);
         User result = userRepository.save(user);
 
-        //OAuth2
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/user/me")
-//                .buildAndExpand(result.getId()).toUri();
-
         EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(user);
         emailConfirmationTokenRepository.save(emailConfirmationToken);
-        System.out.println("🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹🦹");
         TokenActions tokenActions = tokenActionsRepository.findByUserId(user.getId()).orElse(
                 tokenActionsRepository.save(new TokenActions(emailConfirmationToken, user))
         );
@@ -175,6 +171,6 @@ public class AuthController {
             userRepository.save(user);
             return ResponseEntity.ok(new MessageResponse("Email ok"));
         }
-        return ResponseEntity.ok(new MessageResponse("Email problem"));
+        return ResponseEntity.badRequest().body(new MessageResponse("Email problem"));
     }
 }

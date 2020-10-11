@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @ToString
@@ -22,7 +21,9 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     private final String username;
     private final String email;
     private final String userLastName;
+    private final String userNickName;
     private final Integer age;
+    private final String  imageUrl;
 
 //    @JsonIgnore
     private final String password;
@@ -30,13 +31,15 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
 
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String userLastName, Integer age, String password,
+    public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, Integer age, String imageUrl, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.userLastName = userLastName;
+        this.userNickName = userNickName;
         this.age = age;
+        this.imageUrl = imageUrl;
         this.password = password;
         this.authorities = authorities;
     }
@@ -51,8 +54,8 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
                 user.getUserName(),
                 user.getEmail(),
                 user.getUserLastName(),
-                user.getAge(),
-                user.getPassword(),
+                userNickName, user.getAge(),
+                imageUrl, user.getPassword(),
                 authorities);
     }
 

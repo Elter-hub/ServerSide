@@ -87,7 +87,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUserNickName(signUpRequest.getUserNickName())) {
             return ResponseEntity
                     .badRequest()
@@ -164,7 +164,6 @@ public class AuthController {
 
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmUserAccount(@RequestBody EmailConfirmationRequest requestEmailToken) {
-        System.out.println(requestEmailToken.getEmailConfirmationToken());
         EmailConfirmationToken token = emailConfirmationTokenRepository.findByEmailConfirmationToken(requestEmailToken.getEmailConfirmationToken());
         if (token != null) {
             User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());

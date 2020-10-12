@@ -26,6 +26,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
          jsr250Enabled = true,
          prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String[] AUTH_WHITELIST = {
+            "/api/auth/**",
+            "/api/forgot-password",
+            "/api/reset-password"
+    };
     private final UserDetailsServiceImpl userDetailsService;
 
     private final AuthEntryPointJwt unauthorizedHandler;
@@ -68,9 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/api/auth/**").permitAll()
-                    .antMatchers("/api/forgot-password").permitAll()
-                    .antMatchers("/api/reset-password").permitAll()
+                    .antMatchers(AUTH_WHITELIST).permitAll()
                     .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -22,6 +22,7 @@ public class SignupRequest {
 
     @NotBlank
 //    @Column(unique = true)
+    // when creating a Bean it's check for duplicates
     private String userNickName;
 
     @NotBlank

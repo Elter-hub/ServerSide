@@ -59,11 +59,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    private String providerId;
-
     private LocalDateTime createdDate;
 
     private boolean isEnabled;
 
+    @NotBlank
+    @Pattern(regexp = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/*%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String imageUrl;
 }

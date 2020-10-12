@@ -81,7 +81,9 @@ public class AuthController {
                 userDetails.getEmail(),
                 roles,
                 userDetails.getAge(),
-                userDetails.getUserLastName()));
+                userDetails.getUserLastName(),
+                userDetails.getUserNickName(),
+                userDetails.getImageUrl()));
     }
 
     @PostMapping("/signup")
@@ -108,7 +110,6 @@ public class AuthController {
                 .sex(signUpRequest.getSex())
                 .createdDate(LocalDateTime.now())
                 .build();
-        System.out.println(user + " object is created");
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -140,7 +141,7 @@ public class AuthController {
             });
         }
         user.setRoles(roles);
-        User result = userRepository.save(user);
+        userRepository.save(user);
 
         EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(user);
         emailConfirmationTokenRepository.save(emailConfirmationToken);

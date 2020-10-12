@@ -24,8 +24,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     private final String userNickName;
     private final Integer age;
     private final String  imageUrl;
-
-//    @JsonIgnore
     private final String password;
     private Map<String, Object> attributes;
 
@@ -44,6 +42,14 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
         this.authorities = authorities;
     }
 
+    public String getUserNickName() {
+        return userNickName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
@@ -54,8 +60,10 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
                 user.getUserName(),
                 user.getEmail(),
                 user.getUserLastName(),
-                userNickName, user.getAge(),
-                imageUrl, user.getPassword(),
+                user.getUserNickName(),
+                user.getAge(),
+                user.getImageUrl(),
+                user.getPassword(),
                 authorities);
     }
 

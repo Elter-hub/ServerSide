@@ -1,8 +1,10 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dto.request.ChangeImageRequest;
 import com.example.demo.dto.request.PasswordRecoverRequest;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.services.ChangeImageUrlService;
 import com.example.demo.services.UserChangePasswordService;
 import com.example.demo.services.UserRecoverPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,12 @@ public class UserController {
 
     private final UserChangePasswordService userChangePasswordService;
     private final UserRecoverPasswordService userRecoverPasswordService;
+    private final ChangeImageUrlService changeImageUrlService;
 
-    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService) {
+    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService, ChangeImageUrlService changeImageUrlService) {
         this.userChangePasswordService = userChangePasswordService;
         this.userRecoverPasswordService = userRecoverPasswordService;
+        this.changeImageUrlService = changeImageUrlService;
     }
 
     @PostMapping("/change-password")
@@ -33,9 +37,8 @@ public class UserController {
                 : userRecoverPasswordService.forgotPassword(userChangePasswordRequest.getEmailForRecoveringPassword());
     }
 
-    @PostMapping("change-image")
-    public ResponseEntity<MessageResponse> changeUserImageUrl(@RequestBody String url){
-
-        return ResponseEntity.ok(new MessageResponse("Url is changed"));
+    @PutMapping("change-image")
+    public ResponseEntity<MessageResponse> changeUserImageUrl(@RequestBody ChangeImageRequest url){
+       return this.changeImageUrlService.changeImageUrl(url.getImageUrl(), url.getUserEmail());
     }
 }

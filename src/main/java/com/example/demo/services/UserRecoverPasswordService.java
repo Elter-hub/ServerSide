@@ -76,13 +76,6 @@ public class UserRecoverPasswordService {
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
     }
 
-    /**
-     * Generate unique token. You may add multiple parameters to create a strong
-     * token.
-     *
-     * @return unique token
-     */
-
     private String generateToken() {
         StringBuilder token = new StringBuilder();
         return token.append(UUID.randomUUID().toString())
@@ -121,12 +114,6 @@ public class UserRecoverPasswordService {
         return ResponseEntity.ok(new MessageResponse("Your password successfully updated."));
     }
 
-    /**
-     * Check whether the created token expired or not.
-     *
-     * @param tokenCreationDate
-     * @return true or false
-     */
     private boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
         LocalDateTime now = LocalDateTime.now();
         Duration diff = Duration.between(tokenCreationDate, now);

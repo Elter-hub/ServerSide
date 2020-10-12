@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,46 +43,34 @@ public class UserRecoverPasswordService {
     public ResponseEntity<MessageResponse> forgotPassword(String email) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(email));
+        //Can be invoked by unauthorized user who forgot password and can enter any email...
         if (!userOptional.isPresent()) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity
+                    .badRequest()
                     .body(new MessageResponse("Email doesnt exist!"));
         }
         User user = userOptional.get();
         Optional<TokenActions> tokenActionsByUserIdOptional = tokenActionsRepository.findByUserId(user.getId());
 
-
         PasswordRecoverToken passwordRecoverToken = new PasswordRecoverToken(user);
-        String tokenForPasswordRecover = generateToken();
-        passwordRecoverToken.setPasswordRecoverToken(tokenForPasswordRecover);
-        passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(LocalDateTime.now());
-        passwordRecoverToken.setUserEmailForPasswordRecovering(user.getEmail());
         passwordRecoverTokenRepository.save(passwordRecoverToken);
 
         if (tokenActionsByUserIdOptional.isPresent()){
-            tokenActionsByUserIdOptional.get().setPasswordRecoverToken(tokenForPasswordRecover);
+            tokenActionsByUserIdOptional.get().setPasswordRecoverToken(passwordRecoverToken.getPasswordRecoverToken());
         tokenActionsRepository.save(tokenActionsByUserIdOptional.get());
         }else {
             tokenActionsRepository.save(new TokenActions(passwordRecoverToken, user));
         }
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Password recovering ");
-        mailMessage.setFrom("ihor04@gmail.com");
-        mailMessage.setText("To recover password please click in the link below  : "
-                + "http://localhost:4200/change-password?token=" + tokenForPasswordRecover
-                + "&email=" + user.getEmail());
+        emailSenderService.sendEmail(user.getEmail(), "Password recovering ",
+                "To recover password please click in the link below  : "
+                        + "http://localhost:4200/change-password?token=" + passwordRecoverToken.getPasswordRecoverToken()
+                        + "&email=" + user.getEmail());
 
-        emailSenderService.sendEmail(mailMessage);
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
     }
 
-    private String generateToken() {
-        StringBuilder token = new StringBuilder();
-        return token.append(UUID.randomUUID().toString())
-                .append(UUID.randomUUID().toString()).toString();
-    }
-
+    @Transactional
     public ResponseEntity<MessageResponse> resetPassword(String token, String password, String emailForRecoveringPassword) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(emailForRecoveringPassword));
@@ -102,12 +91,10 @@ public class UserRecoverPasswordService {
         }
 
         User user = userOptional.get();
-        PasswordRecoverToken passwordRecoverToken = passwordTokenOptional.get();
-
+        System.out.println("🧊🧊🧊🧊🧊🧊");
         user.setPassword(passwordEncoder.encode(password));
-        passwordRecoverToken.setPasswordRecoverToken(null);
-        passwordRecoverToken.setPasswordConfirmationTokenCreatedDate(null);
-        passwordRecoverToken.setUserEmailForPasswordRecovering(null);
+        passwordRecoverTokenRepository.deleteByUserEmailForPasswordRecovering(user.getEmail());
+        System.out.println("🦮🦮🦮🦮🦮🦮");
         userRepository.save(user);
         System.out.println("User from reset " + user.toString());
 

@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PasswordRecoverTokenRepository extends CrudRepository<PasswordRecoverToken, String> {
     PasswordRecoverToken findByPasswordRecoverToken(String passwordRecoverToken);
+    void deleteByUserEmailForPasswordRecovering(String email);
 }

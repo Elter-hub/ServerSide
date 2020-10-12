@@ -40,9 +40,16 @@ public class PasswordRecoverToken {
 
     public PasswordRecoverToken(User user) {
         this.user = user;
+        userEmailForPasswordRecovering = user.getEmail();
         passwordConfirmationTokenCreatedDate = LocalDateTime.now();
-        passwordRecoverToken = UUID.randomUUID().toString();
+        passwordRecoverToken = generateToken();
     }
 
     public PasswordRecoverToken() {}
+
+    private String generateToken() {
+        StringBuilder token = new StringBuilder();
+        return token.append(UUID.randomUUID().toString())
+                .append(UUID.randomUUID().toString()).toString();
+    }
 }

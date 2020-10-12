@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @ToString
-public class UserDetailsImpl implements OAuth2User, UserDetails {
+public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
     private final Long id;
     private final String username;
@@ -25,8 +25,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     private final Integer age;
     private final String  imageUrl;
     private final String password;
-    private Map<String, Object> attributes;
-
     private final Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, Integer age, String imageUrl, String password,
@@ -67,13 +65,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
                 authorities);
     }
 
-    public static UserDetailsImpl build(User user, Map<String, Object> attributes) {
-        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
-        userDetails.setAttributes(attributes);
-        return userDetails;
-    }
-
-
     public String getUserLastName() {
         return userLastName;
     }
@@ -106,15 +97,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -143,8 +125,4 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
-
-    @Override
-    public String getName() {
-        return String.valueOf(id);    }
 }

@@ -37,6 +37,7 @@ public class SignupRequest {
 
     @NotBlank
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")  //// not sure if correct
+//    @JsonIgnore
     private String password;
 
     @NotNull

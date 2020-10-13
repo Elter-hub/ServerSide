@@ -20,8 +20,8 @@ public class PasswordRecoverController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody PasswordRecoverRequest email) {
-        return userRecoverPasswordService.forgotPassword(email.getEmailForRecoveringPassword());
+    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody PasswordRecoverRequest request) {
+        return userRecoverPasswordService.forgotPassword(request.getEmailForRecoveringPassword());
     }
 
     @PostMapping("/reset-password")

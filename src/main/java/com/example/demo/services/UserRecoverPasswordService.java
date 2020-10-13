@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -50,24 +52,21 @@ public class UserRecoverPasswordService {
                     .body(new MessageResponse("Email doesnt exist!"));
         }
         User user = userOptional.get();
-        Optional<TokenActions> tokenActionsByUserIdOptional = tokenActionsRepository.findByUserId(user.getId());
-
-        PasswordRecoverToken passwordRecoverToken = new PasswordRecoverToken(user);
-        passwordRecoverTokenRepository.save(passwordRecoverToken);
-
-        if (tokenActionsByUserIdOptional.isPresent()){
-            tokenActionsByUserIdOptional.get().setPasswordRecoverToken(passwordRecoverToken.getPasswordRecoverToken());
-        tokenActionsRepository.save(tokenActionsByUserIdOptional.get());
-        }else {
-            tokenActionsRepository.save(new TokenActions(passwordRecoverToken, user));
+        Optional<PasswordRecoverToken> tokenByEmailOptional = passwordRecoverTokenRepository.findByUserEmailForPasswordRecovering(user.getEmail());
+        if (tokenByEmailOptional.isPresent() && !isTokenExpired(tokenByEmailOptional.get().getPasswordConfirmationTokenCreatedDate())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("PLease follow the link in the email we send you"));
         }
-
+        PasswordRecoverToken passwordRecoverToken = tokenActions(user, tokenActionsRepository, passwordRecoverTokenRepository);
         emailSenderService.sendEmail(user.getEmail(), "Password recovering ",
-                "To recover password please click in the link below  : "
+
+                "To recover password please click visit the link below  : "
                         + "http://localhost:4200/change-password?token=" + passwordRecoverToken.getPasswordRecoverToken()
-                        + "&email=" + user.getEmail());
+                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken());
 
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
+
     }
 
     @Transactional
@@ -91,19 +90,52 @@ public class UserRecoverPasswordService {
         }
 
         User user = userOptional.get();
-        System.out.println("🧊🧊🧊🧊🧊🧊");
         user.setPassword(passwordEncoder.encode(password));
         passwordRecoverTokenRepository.deleteByUserEmailForPasswordRecovering(user.getEmail());
-        System.out.println("🦮🦮🦮🦮🦮🦮");
         userRepository.save(user);
         System.out.println("User from reset " + user.toString());
 
         return ResponseEntity.ok(new MessageResponse("Your password successfully updated."));
     }
 
-    private boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
+
+    public boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
         LocalDateTime now = LocalDateTime.now();
         Duration diff = Duration.between(tokenCreationDate, now);
         return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES;
+    }
+
+    public ResponseEntity<MessageResponse> userResetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmailIgnoreCase(email);
+        user.setTemporalPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return ResponseEntity.ok(new MessageResponse("Successively set Temporal password "));
+    }
+
+    @Transactional
+    public ResponseEntity<MessageResponse> confirmPasswordChanges(String email, String token) {
+        User user = userRepository.findByEmailIgnoreCase(email);
+        System.out.println("🧊");
+        PasswordRecoverToken passwordRecoverToken = passwordRecoverTokenRepository.findByPasswordRecoverToken(token);
+        if (passwordRecoverToken != null) {
+            System.out.println("💥💥💥");
+            user.setPassword(user.getTemporalPassword());
+            passwordRecoverTokenRepository.deleteByUserEmailForPasswordRecovering(email);
+            userRepository.save(user);
+        }
+        return ResponseEntity.ok(new MessageResponse("Password successfully changed!"));
+    }
+
+    public PasswordRecoverToken tokenActions(User user, TokenActionsRepository tokenActionsRepository, PasswordRecoverTokenRepository passwordRecoverTokenRepository) {
+        Optional<TokenActions> tokenActionsByUserIdOptional = tokenActionsRepository.findByUserId(user.getId());
+        PasswordRecoverToken passwordRecoverToken = new PasswordRecoverToken(user);
+        passwordRecoverTokenRepository.save(passwordRecoverToken);
+        if (tokenActionsByUserIdOptional.isPresent()) {
+            tokenActionsByUserIdOptional.get().setPasswordRecoverToken(passwordRecoverToken.getPasswordRecoverToken());
+            tokenActionsRepository.save(tokenActionsByUserIdOptional.get());
+        } else {
+            tokenActionsRepository.save(new TokenActions(passwordRecoverToken, user));
+        }
+        return passwordRecoverToken;
     }
 }

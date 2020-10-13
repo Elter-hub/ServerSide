@@ -26,7 +26,6 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final LoginService loginService;
-
     private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final RegisterService registerService;
 

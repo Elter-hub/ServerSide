@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 public class ChangeImageRequest {
-
     @NotBlank
     private String imageUrl;
 

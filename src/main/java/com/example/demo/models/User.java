@@ -66,4 +66,9 @@ public class User {
     @NotBlank
     @Pattern(regexp = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/*%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String imageUrl;
+
+    //Store new password separately, if user confirm by email this password becomes primary
+    @NotBlank
+    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
+    private String temporalPassword;
 }

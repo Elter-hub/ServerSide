@@ -29,7 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
             "/api/auth/**",
             "/api/forgot-password",
-            "/api/reset-password"
+            "/api/reset-password",
+            "/user/confirm-password"
     };
     private final UserDetailsServiceImpl userDetailsService;
 

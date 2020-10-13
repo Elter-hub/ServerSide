@@ -8,17 +8,13 @@ import com.example.demo.repository.PasswordRecoverTokenRepository;
 import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserRecoverPasswordService {
@@ -93,7 +89,6 @@ public class UserRecoverPasswordService {
         user.setPassword(passwordEncoder.encode(password));
         passwordRecoverTokenRepository.deleteByUserEmailForPasswordRecovering(user.getEmail());
         userRepository.save(user);
-        System.out.println("User from reset " + user.toString());
 
         return ResponseEntity.ok(new MessageResponse("Your password successfully updated."));
     }
@@ -115,10 +110,8 @@ public class UserRecoverPasswordService {
     @Transactional
     public ResponseEntity<MessageResponse> confirmPasswordChanges(String email, String token) {
         User user = userRepository.findByEmailIgnoreCase(email);
-        System.out.println("🧊");
         PasswordRecoverToken passwordRecoverToken = passwordRecoverTokenRepository.findByPasswordRecoverToken(token);
         if (passwordRecoverToken != null) {
-            System.out.println("💥💥💥");
             user.setPassword(user.getTemporalPassword());
             passwordRecoverTokenRepository.deleteByUserEmailForPasswordRecovering(email);
             userRepository.save(user);

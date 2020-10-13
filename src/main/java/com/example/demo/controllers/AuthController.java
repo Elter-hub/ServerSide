@@ -29,25 +29,27 @@ public class AuthController {
     private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final RegisterService registerService;
 
-    public AuthController(UserRepository userRepository, RoleRepository roleRepository,
-                          PasswordEncoder encoder, LoginService loginService, EmailConfirmationTokenRepository emailConfirmationTokenRepository, RegisterService registerService, EmailSenderService emailSenderService, TokenActionsRepository tokenActionsRepository) {
+    public AuthController(UserRepository userRepository, LoginService loginService,
+                          EmailConfirmationTokenRepository emailConfirmationTokenRepository,
+                          RegisterService registerService) {
         this.userRepository = userRepository;
         this.loginService = loginService;
         this.emailConfirmationTokenRepository = emailConfirmationTokenRepository;
         this.registerService = registerService;
     }
 
+    // 2 queries
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return loginService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
     }
-
+        // 7 Hibernate queries 🧰
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        // Create new user's account
         return registerService.registerUser(signUpRequest);
     }
 
+        //4 queries
     @PostMapping("/confirm")
     public ResponseEntity<MessageResponse> confirmUserAccount(@RequestBody EmailConfirmationRequest requestEmailToken) {
         EmailConfirmationToken token = emailConfirmationTokenRepository

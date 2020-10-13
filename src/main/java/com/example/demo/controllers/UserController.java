@@ -25,7 +25,7 @@ public class UserController {
         this.userRecoverPasswordService = userRecoverPasswordService;
         this.changeImageUrlService = changeImageUrlService;
     }
-
+        //10 Hibernate queries
     @PostMapping("/change-password")
     public ResponseEntity<MessageResponse> checkUserOldPassword(@RequestBody UserChangePasswordRequest userChangePasswordRequest){
         ResponseEntity<MessageResponse> checkAndForgotPassword = userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getUserEmail(),
@@ -35,7 +35,7 @@ public class UserController {
                 : userRecoverPasswordService.userResetPassword(userChangePasswordRequest.getUserEmail(),
                                                                userChangePasswordRequest.getNewPassword());
     }
-
+        // 7 Queries
     @PostMapping("/confirm-password")
     public ResponseEntity<MessageResponse> confirmUserChangePassword(@RequestBody PasswordRecoverRequest passwordRecoverRequest){
         return userRecoverPasswordService.confirmPasswordChanges(passwordRecoverRequest.getEmailForRecoveringPassword(),

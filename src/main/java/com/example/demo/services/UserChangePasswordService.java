@@ -2,7 +2,6 @@ package com.example.demo.services;
 
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.models.PasswordRecoverToken;
-import com.example.demo.models.TokenActions;
 import com.example.demo.models.User;
 import com.example.demo.repository.PasswordRecoverTokenRepository;
 import com.example.demo.repository.TokenActionsRepository;

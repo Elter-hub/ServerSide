@@ -9,14 +9,10 @@ import com.example.demo.dto.request.SignupRequest;
 import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.repository.EmailConfirmationTokenRepository;
-import com.example.demo.repository.RoleRepository;
-import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.auth.LoginService;
-import com.example.demo.services.EmailSenderService;
 import com.example.demo.services.auth.RegisterService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)

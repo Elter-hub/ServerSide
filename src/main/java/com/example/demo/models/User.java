@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.example.demo.models.content.Cart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,13 +48,13 @@ public class User {
     @NotNull
     @Min(12)  // somehow combine
     @Max(80)
-    private int age;
+    private Integer age;
 
     @NotBlank
     @Size(max = 20)
     private String sex;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -71,4 +72,11 @@ public class User {
     @NotBlank
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
+
+    @OneToOne(targetEntity = Cart.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "id")
+    private Cart cart;
+
+    @NotNull
+    private Long cartId = id;
 }

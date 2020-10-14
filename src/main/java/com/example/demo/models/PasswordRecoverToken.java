@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.example.demo.models.enums.EToken;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

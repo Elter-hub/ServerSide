@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                     .antMatchers(AUTH_WHITELIST).permitAll()
+                //🤔 cant figure out why @PreAuthorize("hasRole('Admin')" throwing NPE
+                    .antMatchers("/content/add-item").hasRole("ADMIN")
                     .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -3,6 +3,7 @@ package com.example.demo.services.auth;
 import com.example.demo.dto.request.SignupRequest;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.models.*;
+import com.example.demo.models.enums.ERole;
 import com.example.demo.repository.EmailConfirmationTokenRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.TokenActionsRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -78,6 +80,8 @@ public class RegisterService {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
+            Optional<Role> admin = roleRepository.findByName(ERole.ROLE_ADMIN);
+            roles.add(admin.get());
         } else {
             strRoles.forEach(role -> {
                 switch (role) {

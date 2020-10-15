@@ -35,7 +35,7 @@ public class PasswordRecoverToken {
     @Column(name = "Date")
     private LocalDateTime passwordConfirmationTokenCreatedDate;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "id")
     private User user;
 

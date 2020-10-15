@@ -36,7 +36,7 @@ public class EmailConfirmationToken {
     @Column(name = "date")
     private LocalDateTime emailConfirmationTokenCreatedDate;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "id")
     private User user;
 

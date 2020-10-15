@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -46,6 +47,6 @@ public class Item {
     @NotBlank
     private Double stars;
 
-    @ManyToMany(mappedBy = "cart")
-    private List<User> user;
+//    @ManyToMany(mappedBy = "cart")
+//    private List<User> user = new ArrayList<>();
 }

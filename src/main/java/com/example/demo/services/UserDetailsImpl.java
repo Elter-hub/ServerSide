@@ -41,14 +41,6 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public String getUserNickName() {
-        return userNickName;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
@@ -70,6 +62,15 @@ public class UserDetailsImpl implements UserDetails {
     public List<Item> getCart() {
         return cart;
     }
+
+    public String getUserNickName() {
+        return userNickName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public String getUserLastName() {
         return userLastName;
     }

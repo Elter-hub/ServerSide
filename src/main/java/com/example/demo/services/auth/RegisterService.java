@@ -81,8 +81,8 @@ public class RegisterService {
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
 //            Creating Admin
-            Optional<Role> admin = roleRepository.findByName(ERole.ROLE_ADMIN);
-            roles.add(admin.get());
+//            Optional<Role> admin = roleRepository.findByName(ERole.ROLE_ADMIN);
+//            roles.add(admin.get());
         } else {
             strRoles.forEach(role -> {
                 switch (role) {

@@ -1,6 +1,6 @@
 package com.example.demo.models;
 
-import com.example.demo.models.content.Cart;
+import com.example.demo.models.content.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -73,10 +75,9 @@ public class User {
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
 
-    @OneToOne(targetEntity = Cart.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "id")
-    private Cart cart;
-
-    @NotNull
-    private Long cartId = id;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_items",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<Item> cart = new ArrayList<>();
 }

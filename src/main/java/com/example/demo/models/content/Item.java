@@ -1,5 +1,6 @@
 package com.example.demo.models.content;
 
+import com.example.demo.models.User;
 import com.example.demo.models.enums.EToken;
 import com.example.demo.models.enums.ItemType;
 import lombok.*;
@@ -45,6 +46,6 @@ public class Item {
     @NotBlank
     private Double stars;
 
-    @ManyToMany(mappedBy = "items")
-    private List<Cart> cart;
+    @ManyToMany(mappedBy = "cart")
+    private List<User> user;
 }

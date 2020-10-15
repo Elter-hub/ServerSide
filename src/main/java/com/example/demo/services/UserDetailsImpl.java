@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.example.demo.models.User;
+import com.example.demo.models.content.Item;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,10 +24,11 @@ public class UserDetailsImpl implements UserDetails {
     private final Integer age;
     private final String  imageUrl;
     private final String password;
+    private final List<Item> cart;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, Integer age, String imageUrl, String password,
-                           Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, Integer age,
+                           String imageUrl, String password, List<Item> cart, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -35,6 +37,7 @@ public class UserDetailsImpl implements UserDetails {
         this.age = age;
         this.imageUrl = imageUrl;
         this.password = password;
+        this.cart = cart;
         this.authorities = authorities;
     }
 
@@ -60,9 +63,13 @@ public class UserDetailsImpl implements UserDetails {
                 user.getAge(),
                 user.getImageUrl(),
                 user.getPassword(),
+                user.getCart(),
                 authorities);
     }
 
+    public List<Item> getCart() {
+        return cart;
+    }
     public String getUserLastName() {
         return userLastName;
     }

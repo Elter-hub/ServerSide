@@ -1,5 +1,6 @@
 package com.example.demo.dto.response;
 
+import com.example.demo.models.content.Item;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,10 +19,11 @@ public class JwtResponse {
     private String userEmail;
     private String imageUrl;
     private List<String> roles;
+    private List<Item> cart;
 
     public JwtResponse(String accessToken, Long id, String userName, String userEmail,
                        List<String> roles, Integer userAge, String userLastName, String userNickName,
-                       String imageUrl) {
+                       String imageUrl, List<Item> cart) {
         this.token = accessToken;
         this.id = id;
         this.userName = userName;
@@ -31,5 +33,6 @@ public class JwtResponse {
         this.userLastName = userLastName;
         this.userNickName = userNickName;
         this.imageUrl = imageUrl;
+        this.cart = cart;
     }
 }

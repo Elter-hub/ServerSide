@@ -45,6 +45,7 @@ public class LoginService {
                 userDetails.getAge(),
                 userDetails.getUserLastName(),
                 userDetails.getUserNickName(),
-                userDetails.getImageUrl()));
+                userDetails.getImageUrl(),
+                userDetails.getCart()));
     }
 }

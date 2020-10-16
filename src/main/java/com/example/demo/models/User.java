@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -75,9 +72,16 @@ public class User {
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_items",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private List<Item> cart = new ArrayList<>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "user_items",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "item_id"))
+//    private Map<Item, Integer> cart = new HashMap<>();
+
+    @ElementCollection
+    @CollectionTable(name = "user_items",
+            joinColumns = @JoinColumn(name = "cart_id"))
+    @MapKeyJoinColumn(name = "item_id")
+    @Column(name = "quantity")
+    private Map<Item, Integer> cart = new HashMap<>();
 }

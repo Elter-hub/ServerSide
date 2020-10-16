@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -19,11 +20,11 @@ public class JwtResponse {
     private String userEmail;
     private String imageUrl;
     private List<String> roles;
-    private List<Item> cart;
+    private Map<Item, Integer> cart;
 
     public JwtResponse(String accessToken, Long id, String userName, String userEmail,
                        List<String> roles, Integer userAge, String userLastName, String userNickName,
-                       String imageUrl, List<Item> cart) {
+                       String imageUrl, Map<Item, Integer> cart) {
         this.token = accessToken;
         this.id = id;
         this.userName = userName;

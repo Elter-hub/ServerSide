@@ -1,6 +1,7 @@
 package com.example.demo.services.content;
 
 import com.example.demo.dto.request.PostItemRequest;
+import com.example.demo.dto.response.CartResponse;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.models.User;
 import com.example.demo.models.content.Item;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemService {
@@ -42,14 +44,28 @@ public class ItemService {
         itemRepository.save(newItem);
     }
 
-    public ResponseEntity<MessageResponse> addItem(String userEmail, Long itemId) {
+    public ResponseEntity<?> addItem(String userEmail, Long itemId) {
         Item item = itemRepository.findByItemId(itemId).orElseThrow(() -> new RuntimeException("Item doesnt exist"));
         User user = userRepository.findByEmailIgnoreCase(userEmail);
-        user.getCart().add(item);
-//        item.getUser().add(user);
+
+        if (user.getCart().containsKey(item)) {
+            user.getCart().put(item, user.getCart().get(item) + 1);
+        } else {
+            user.getCart().put(item, 1);
+        }
+
+        itemRepository.save(item);
         userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("ALl WOrks"));
+        return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
 
+    public ResponseEntity<?> removeItem(String userEmail, Long itemId) {
+        Item item = itemRepository.findByItemId(itemId).orElseThrow(() -> new RuntimeException("Item doesnt exist"));
+        User user = userRepository.findByEmailIgnoreCase(userEmail);
 
+        user.getCart().remove(item);
+        itemRepository.save(item);
+        userRepository.save(user);
+        return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
+    }
 }

@@ -20,11 +20,11 @@ public class JwtResponse {
     private String userEmail;
     private String imageUrl;
     private List<String> roles;
-    private Map<Item, Integer> cart;
+    private CartResponse cart;
 
     public JwtResponse(String accessToken, Long id, String userName, String userEmail,
                        List<String> roles, Integer userAge, String userLastName, String userNickName,
-                       String imageUrl, Map<Item, Integer> cart) {
+                       String imageUrl, CartResponse cart) {
         this.token = accessToken;
         this.id = id;
         this.userName = userName;

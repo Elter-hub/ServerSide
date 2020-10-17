@@ -1,5 +1,6 @@
 package com.example.demo.services.auth;
 
+import com.example.demo.dto.response.CartResponse;
 import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.security.jwt.JwtTokenProvider;
 import com.example.demo.services.UserDetailsImpl;
@@ -46,6 +47,6 @@ public class LoginService {
                 userDetails.getUserLastName(),
                 userDetails.getUserNickName(),
                 userDetails.getImageUrl(),
-                userDetails.getCart()));
+                new CartResponse(userDetails.getCart().keySet(), userDetails.getCart().values())));
     }
 }

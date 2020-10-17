@@ -8,6 +8,7 @@ import com.example.demo.models.content.Item;
 import com.example.demo.models.enums.ItemType;
 import com.example.demo.repository.ItemRepository;
 import com.example.demo.repository.UserRepository;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@JsonSerialize
 public class ItemService {
 
     private final ItemRepository itemRepository;

@@ -72,12 +72,6 @@ public class User {
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "user_items",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "item_id"))
-//    private Map<Item, Integer> cart = new HashMap<>();
-
     @ElementCollection
     @CollectionTable(name = "user_items",
             joinColumns = @JoinColumn(name = "cart_id"))

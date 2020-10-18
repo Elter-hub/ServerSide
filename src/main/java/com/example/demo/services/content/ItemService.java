@@ -70,4 +70,11 @@ public class ItemService {
         userRepository.save(user);
         return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
+
+    public ResponseEntity<?> buyItems(String userEmail) {
+        User user = userRepository.findByEmailIgnoreCase(userEmail);
+        user.getCart().clear();
+        userRepository.save(user);
+        return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
+    }
 }

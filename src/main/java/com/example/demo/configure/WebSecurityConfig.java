@@ -27,9 +27,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
             "/api/auth/**",
-            "/api/forgot-password",
-            "/api/reset-password",
-            "/user/confirm-password"
+//            "/api/forgot-password",
+//            "/api/reset-password",
+//            "/api/refresh-token",
+//            "/user/confirm-password"
     };
     private final UserDetailsServiceImpl userDetailsService;
 

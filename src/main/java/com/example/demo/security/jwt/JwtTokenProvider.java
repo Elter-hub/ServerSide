@@ -2,7 +2,10 @@ package com.example.demo.security.jwt;
 
 import java.util.Date;
 
+import com.example.demo.models.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.services.UserDetailsImpl;
+import com.example.demo.services.auth.RefreshTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,15 +14,24 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Component
 public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
     @Value("${app.jwt.expirationMs}")
     private int jwtExpirationMs;
+
+    public JwtTokenProvider(UserRepository userRepository, RefreshTokenService refreshTokenService) {
+        this.userRepository = userRepository;
+        this.refreshTokenService = refreshTokenService;
+    }
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -31,11 +43,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
     public String getUserEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken, HttpServletRequest request) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;

@@ -78,4 +78,7 @@ public class User {
     @MapKeyJoinColumn(name = "item_id")
     @Column(name = "quantity")
     private Map<Item, Integer> cart = new HashMap<>();
+
+    @NotBlank
+    private String refreshJwtToken;
 }

@@ -2,6 +2,7 @@ package com.example.demo.services.auth;
 
 import com.example.demo.dto.response.CartResponse;
 import com.example.demo.dto.response.JwtResponse;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtTokenProvider;
 import com.example.demo.services.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +23,15 @@ public class LoginService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    public LoginService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+    public LoginService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
+                        PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     public ResponseEntity<JwtResponse> authenticateUser(String email, String password) {
@@ -33,14 +40,21 @@ public class LoginService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtTokenProvider.generateJwtToken(authentication);
+        String refreshJwt = UUID.randomUUID().toString();
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String encodedRefreshJwt = passwordEncoder.encode(UUID.randomUUID().toString());
+        userDetails.setRefreshJwtToken(refreshJwt);
+        userRepository.findByEmailIgnoreCase(email).setRefreshJwtToken(refreshJwt);
+        userRepository.save(userRepository.findByEmailIgnoreCase(email));
+
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                UUID.randomUUID().toString(),
+                refreshJwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),

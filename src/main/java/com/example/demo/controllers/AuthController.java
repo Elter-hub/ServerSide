@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import javax.validation.Valid;
 
 import com.example.demo.dto.request.EmailConfirmationRequest;
+import com.example.demo.dto.request.RefreshTokenRequest;
 import com.example.demo.models.*;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.SignupRequest;
@@ -11,6 +12,7 @@ import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.repository.EmailConfirmationTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.auth.LoginService;
+import com.example.demo.services.auth.RefreshTokenService;
 import com.example.demo.services.auth.RegisterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,14 +26,16 @@ public class AuthController {
     private final LoginService loginService;
     private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final RegisterService registerService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthController(UserRepository userRepository, LoginService loginService,
                           EmailConfirmationTokenRepository emailConfirmationTokenRepository,
-                          RegisterService registerService) {
+                          RegisterService registerService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.loginService = loginService;
         this.emailConfirmationTokenRepository = emailConfirmationTokenRepository;
         this.registerService = registerService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     // 2 queries
@@ -45,7 +49,16 @@ public class AuthController {
         return registerService.registerUser(signUpRequest);
     }
 
-        //4 queries
+    @PostMapping("/refresh-token")
+    public ResponseEntity<MessageResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        return  refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getUserEmail())
+                ? ResponseEntity.accepted().body(new MessageResponse("Refresh token is valid🦹"))
+                : ResponseEntity.badRequest().body(new MessageResponse("That shit 💩"));
+    }
+
+
+
+    //4 queries
     @PostMapping("/confirm")
     public ResponseEntity<MessageResponse> confirmUserAccount(@RequestBody EmailConfirmationRequest requestEmailToken) {
         EmailConfirmationToken token = emailConfirmationTokenRepository

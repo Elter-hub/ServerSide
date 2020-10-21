@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.services.UserDetailsServiceImpl;
+import com.example.demo.services.auth.RefreshTokenService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
     private UserDetailsServiceImpl userDetailsService;
     
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
@@ -33,7 +38,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtTokenProvider.validateJwtToken(jwt)) {
+            if (jwt != null && jwtTokenProvider.validateJwtToken(jwt, request)) {
                 String userEmailFromJwtToken = jwtTokenProvider.getUserEmailFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmailFromJwtToken);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -41,7 +46,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
         filterChain.doFilter(request, response);

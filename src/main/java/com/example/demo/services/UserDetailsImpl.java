@@ -8,11 +8,12 @@ import java.util.stream.Collectors;
 
 import com.example.demo.models.User;
 import com.example.demo.models.content.Item;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 
 @ToString
 public class UserDetailsImpl implements UserDetails {
@@ -22,19 +23,21 @@ public class UserDetailsImpl implements UserDetails {
     private final String email;
     private final String userLastName;
     private final String userNickName;
+    private  String refreshJwtToken;
     private final Integer age;
     private final String  imageUrl;
     private final String password;
     private final Map<Item, Integer> cart;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, Integer age,
+    public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, String refreshJwtToken, Integer age,
                            String imageUrl, String password, Map<Item, Integer> cart, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.userLastName = userLastName;
         this.userNickName = userNickName;
+        this.refreshJwtToken = refreshJwtToken;
         this.age = age;
         this.imageUrl = imageUrl;
         this.password = password;
@@ -53,6 +56,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getUserLastName(),
                 user.getUserNickName(),
+                user.getRefreshJwtToken(),
                 user.getAge(),
                 user.getImageUrl(),
                 user.getPassword(),
@@ -66,6 +70,10 @@ public class UserDetailsImpl implements UserDetails {
 
     public String getUserNickName() {
         return userNickName;
+    }
+
+    public void setRefreshJwtToken(String refreshJwtToken) {
+        this.refreshJwtToken = refreshJwtToken;
     }
 
     public String getImageUrl() {
@@ -133,3 +141,4 @@ public class UserDetailsImpl implements UserDetails {
         return Objects.equals(id, user.id);
     }
 }
+

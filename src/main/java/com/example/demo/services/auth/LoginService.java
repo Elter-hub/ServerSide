@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +45,10 @@ public class LoginService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String encodedRefreshJwt = passwordEncoder.encode(UUID.randomUUID().toString());
-        userDetails.setRefreshJwtToken(refreshJwt);
-        userRepository.findByEmailIgnoreCase(email).setRefreshJwtToken(refreshJwt);
+        String encodedRefreshJwt = passwordEncoder.encode(refreshJwt);
+        System.out.println("🧰" + refreshJwt);
+        System.out.println("🧰" + encodedRefreshJwt);
+        userRepository.findByEmailIgnoreCase(email).setRefreshJwtToken(encodedRefreshJwt);
         userRepository.save(userRepository.findByEmailIgnoreCase(email));
 
         List<String> roles = userDetails.getAuthorities().stream()

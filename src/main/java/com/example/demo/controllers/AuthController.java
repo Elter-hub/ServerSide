@@ -52,12 +52,13 @@ public class AuthController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<RefreshJwtResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
-        boolean b = refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getUserEmail());
+        return refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(),
+                refreshTokenRequest.getUserEmail())
 
-        return refreshTokenService.generateFreshJwt(refreshTokenRequest.getUserEmail());
+        ? refreshTokenService.generateFreshJwt(refreshTokenRequest.getUserEmail())
+        : ResponseEntity.badRequest().body(new RefreshJwtResponse("Your refresh token is expired",
+                "Redirect logout!"));
     }
-
-
 
     //4 queries
     @PostMapping("/confirm")

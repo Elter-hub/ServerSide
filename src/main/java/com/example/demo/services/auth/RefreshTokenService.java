@@ -27,8 +27,6 @@ public class RefreshTokenService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
 
-
-
     @Value("${app.refreshJwt.expirationMs}")
     private Long refreshExpiration;
 

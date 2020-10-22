@@ -13,5 +13,8 @@ public class RefreshTokenRequest {
     private String userEmail;
 
     @NotBlank
+    private String accessToken;
+
+    @NotBlank
     private String refreshToken;
 }

@@ -81,4 +81,7 @@ public class User {
 
     @NotBlank
     private String refreshJwtToken;
+
+    @NotBlank
+    private LocalDateTime refreshExpiration;
 }

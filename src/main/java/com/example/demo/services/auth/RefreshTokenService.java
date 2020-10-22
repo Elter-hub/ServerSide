@@ -1,30 +1,66 @@
 package com.example.demo.services.auth;
 
+import com.example.demo.dto.response.RefreshJwtResponse;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.jwt.JwtTokenProvider;
+import com.example.demo.services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public RefreshTokenService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+
+    @Value("${app.refreshJwt.expirationMs}")
+    private Long refreshExpiration;
+
+
+    public RefreshTokenService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsService) {
         this.userRepository = userRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
     public boolean validateRefreshToken(String refreshToken, String email){
         User user = userRepository.findByEmailIgnoreCase(email);
-        System.out.println(user);
-        System.out.println(refreshToken);
-        System.out.println("SUPERUSER " + BCrypt.checkpw("Superuser123", user.getPassword()));
-        System.out.println(BCrypt.checkpw(refreshToken, user.getRefreshJwtToken()));
+        return BCrypt.checkpw(refreshToken, user.getRefreshJwtToken())
+                && user.getRefreshExpiration().isAfter(LocalDateTime.now());
+    }
 
-        if (BCrypt.checkpw(refreshToken, user.getRefreshJwtToken())){
-            System.out.println(" 🦮🦮🦮🦮🦮🦮🦮  Refresh token matches");
-            return true;
-        }
-        return false;
+    public ResponseEntity<RefreshJwtResponse> generateFreshJwt(String email){
+        User user = userRepository.findByEmailIgnoreCase(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String accessToken = jwtTokenProvider.generateJwtToken(authentication);
+
+        String refreshJwt = UUID.randomUUID().toString();
+        String encodedRefreshJwt = passwordEncoder.encode(refreshJwt);
+        user.setRefreshJwtToken(encodedRefreshJwt);
+        user.setRefreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiration));
+        userRepository.save(userRepository.findByEmailIgnoreCase(email));
+
+        return ResponseEntity.ok(new RefreshJwtResponse(accessToken, refreshJwt));
     }
 }

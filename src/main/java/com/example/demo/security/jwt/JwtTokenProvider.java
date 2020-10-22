@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private final UserRepository userRepository;
-    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
@@ -28,10 +26,6 @@ public class JwtTokenProvider {
     @Value("${app.jwt.expirationMs}")
     private int jwtExpirationMs;
 
-    public JwtTokenProvider(UserRepository userRepository, RefreshTokenService refreshTokenService) {
-        this.userRepository = userRepository;
-        this.refreshTokenService = refreshTokenService;
-    }
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -46,6 +40,10 @@ public class JwtTokenProvider {
 
     public String getUserEmailFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
 
     public boolean validateJwtToken(String authToken, HttpServletRequest request) {

@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import com.example.demo.dto.request.EmailConfirmationRequest;
 import com.example.demo.dto.request.RefreshTokenRequest;
+import com.example.demo.dto.response.RefreshJwtResponse;
 import com.example.demo.models.*;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.SignupRequest;
@@ -50,10 +51,10 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<MessageResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
-        return  refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getUserEmail())
-                ? ResponseEntity.accepted().body(new MessageResponse("Refresh token is valid🦹"))
-                : ResponseEntity.badRequest().body(new MessageResponse("That shit 💩"));
+    public ResponseEntity<RefreshJwtResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        boolean b = refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getUserEmail());
+
+        return refreshTokenService.generateFreshJwt(refreshTokenRequest.getUserEmail());
     }
 
 

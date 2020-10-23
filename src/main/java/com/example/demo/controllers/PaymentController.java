@@ -1,10 +1,12 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dto.request.BuyItemsRequest;
 import com.example.demo.services.content.ItemService;
 import com.example.demo.services.payment.StripeClientService;
 import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,10 +26,10 @@ public class PaymentController {
     }
 
     @PostMapping("/charge")
-    public Charge chargeCard(HttpServletRequest request) throws Exception {
+    public Charge chargeCard(HttpServletRequest request, @RequestBody BuyItemsRequest items) throws Exception {
         String token = request.getHeader("token");
         Double amount = Double.parseDouble(request.getHeader("amount"));
-        itemService.buyItems(request.getHeader("email"));
+        itemService.buyItems(request.getHeader("email"), items.getItems(), items.getQuantities());
         return this.stripeClientService.chargeCreditCard(token, amount);
     }
 }

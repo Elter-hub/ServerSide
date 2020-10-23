@@ -15,4 +15,5 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     List<Item> findAll();
     Optional<Item> findByItemId(Long itemId);
     List<Item> findAllByType(@NotNull String type);
+    void deleteByItemId(Long id);
 }

@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dto.request.ChangeImageRequest;
+import com.example.demo.dto.request.ChangeItemRequest;
 import com.example.demo.dto.request.PostItemRequest;
 import com.example.demo.models.content.Item;
 import com.example.demo.models.enums.ItemType;
@@ -7,6 +9,7 @@ import com.example.demo.services.content.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +38,28 @@ public class ContentController {
         System.out.println(itemService); // = null WTF???
        itemService.postItem(request);
     }
+
+    @PatchMapping("/promote-item")
+    private Item promoteItem(@RequestBody ChangeItemRequest item){
+        return this.itemService.promoteItem(item.getItem(), item.getNewPrice());
+    }
+
+    @PatchMapping("/cancel-promote-item")
+    private Item cancelPromoteItem(@RequestBody ChangeItemRequest item){
+        return this.itemService.cancelPromoteItem(item.getItem());
+    }
+
+    @Transactional
+    @PostMapping("/delete-item")
+    void deleteItem(@RequestBody ChangeItemRequest item){
+        this.itemService.deleteItem(item.getItem());
+    }
+
+    @PatchMapping("/change-quantity-item")
+    private Item changeItemQuantity(@RequestBody ChangeItemRequest item){
+      return   this.itemService.changeItemQuantity(item.getItem(), item.getNewQuantity());
+    }
+
 
     @GetMapping("/liquors")
     private List<Item> getLiquors() {

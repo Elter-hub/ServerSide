@@ -30,6 +30,12 @@ public class Item {
     @Positive
     private Integer price;
 
+    @Positive
+    private Integer newPrice;
+
+    @Positive
+    private Integer discount;
+
     @PositiveOrZero
     private Integer quantity;
 

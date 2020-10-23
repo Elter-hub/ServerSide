@@ -85,4 +85,9 @@ public class ContentController {
     private List<Item> getVodkas() {
         return itemService.getItems(ItemType.VODKA);
     }
+
+    @GetMapping("/all-items")
+    private List<Item> getAllItems() {
+        return itemService.getAllItems();
+    }
 }

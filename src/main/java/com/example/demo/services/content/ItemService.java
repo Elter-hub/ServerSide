@@ -77,13 +77,14 @@ public class ItemService {
     public ResponseEntity<?> buyItems(String userEmail, ArrayList<Item> items,
                                       ArrayList<Integer> quantities) {
         User user = userRepository.findByEmailIgnoreCase(userEmail);
-        user.getCart().clear();
-        userRepository.save(user);
+//        user.getCart().clear();
         for (int i = 0; i < items.size(); i++){
             Item item = itemRepository.findByItemId(items.get(i).getItemId()).get();
             item.setQuantity(item.getQuantity() - quantities.get(i));
+            user.getCart().put(item, quantities.get(i));
             itemRepository.save(item);
         }
+        userRepository.save(user);
         return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
 

@@ -25,13 +25,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
          jsr250Enabled = true,
          prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String[] AUTH_WHITELIST = {
-            "/api/auth/**",
-//            "/api/forgot-password",
-//            "/api/reset-password",
-//            "/api/refresh-token",
-//            "/user/confirm-password"
+    private static final String[] AUTH_ADMIN_WHITELIST = {
+            "/promote-item",
+            "/cancel-promote-item",
+            "/delete-item",
+            "/change-quantity-item"
     };
+
     private final UserDetailsServiceImpl userDetailsService;
 
     private final AuthEntryPointJwt authEntryPointJwt;
@@ -74,9 +74,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers(AUTH_WHITELIST).permitAll()
+                    .antMatchers("/api/auth/**").permitAll()
                 //🤔 cant figure out why on method @PreAuthorize("hasRole('Admin')" throwing NPE
-                    .antMatchers("/content/add-item").hasRole("ADMIN")
+                    .antMatchers(AUTH_ADMIN_WHITELIST).hasRole("ADMIN")
                     .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

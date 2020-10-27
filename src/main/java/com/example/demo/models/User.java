@@ -84,4 +84,10 @@ public class User {
 
     @NotBlank
     private LocalDateTime refreshExpiration;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_messages",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "message_id"))
+    private List<Message> messages = new ArrayList<>();
 }

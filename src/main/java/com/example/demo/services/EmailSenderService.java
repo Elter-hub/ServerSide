@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service("emailSenderService")
 public class EmailSenderService {
     @Value("${app.user.email}")
-    private String senderEmail;
+    private String adminEmail;
 
     SimpleMailMessage mailMessage = new SimpleMailMessage();
 
@@ -29,8 +29,10 @@ public class EmailSenderService {
     public void sendEmail(String receiver, String subject, String text) {
         mailMessage.setTo(receiver);
         mailMessage.setSubject(subject);
-        mailMessage.setFrom(senderEmail);
+        mailMessage.setFrom(adminEmail);
         mailMessage.setText(text);
         sendEmail(mailMessage);
     }
+
+
 }

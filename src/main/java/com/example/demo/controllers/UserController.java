@@ -61,7 +61,14 @@ public class UserController {
     }
 
     @GetMapping("messages")
-    public ResponseEntity<UserMessagesResponse> responseMessage(@RequestHeader(value = "Email") String  messageRequest) {
+    public ResponseEntity<UserMessagesResponse> messages(@RequestHeader(value = "Email") String  messageRequest) {
         return this.userMessagesService.getMessages(messageRequest);
+    }
+
+    @PostMapping("respond-message")
+    public ResponseEntity<UserMessagesResponse> respondMessage(@RequestBody SendMessageRequest messageRequest) {
+        return this.userMessagesService.userResponseMessage(messageRequest.getUserEmail(),
+                messageRequest.getSubject(),
+                messageRequest.getMessage());
     }
 }

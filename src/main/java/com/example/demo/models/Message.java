@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,15 +28,18 @@ public class Message {
     @NotBlank
     private String message;
 
+    @NotBlank
+    private String userEmail;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "message_type")
     private EMessage type;
 
-    public Message(String subject, String message, EMessage type){
+    public Message(String subject, String message, EMessage type, String email){
         this.message = message;
         this.subject = subject;
         this.type = type;
+        this.userEmail = email;
     }
-
 
 }

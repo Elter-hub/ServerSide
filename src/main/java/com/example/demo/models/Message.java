@@ -31,6 +31,11 @@ public class Message {
     @NotBlank
     private String userEmail;
 
+    @NotBlank
+    private String recipient;
+
+    private Boolean responded;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "message_type")
     private EMessage type;
@@ -40,6 +45,14 @@ public class Message {
         this.subject = subject;
         this.type = type;
         this.userEmail = email;
+    }
+
+    public Message(String subject, String message, EMessage type, String email, String recipient){
+        this.message = message;
+        this.subject = subject;
+        this.type = type;
+        this.userEmail = email;
+        this.recipient = recipient;
     }
 
 }

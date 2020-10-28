@@ -69,6 +69,7 @@ public class UserController {
     public ResponseEntity<UserMessagesResponse> respondMessage(@RequestBody SendMessageRequest messageRequest) {
         return this.userMessagesService.userResponseMessage(messageRequest.getUserEmail(),
                 messageRequest.getSubject(),
-                messageRequest.getMessage());
+                messageRequest.getMessage(),
+                messageRequest.getMessageId());
     }
 }

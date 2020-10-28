@@ -17,4 +17,7 @@ public class SendMessageRequest {
 
     @NotBlank
     private String message;
+
+    @NotBlank
+    private Long messageId;
 }

@@ -2,10 +2,7 @@ package com.example.demo.models;
 
 import com.example.demo.models.enums.EMessage;
 import com.example.demo.models.enums.EToken;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

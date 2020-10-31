@@ -11,54 +11,59 @@ import java.util.List;
 
 @Service
 public class ChatMessageService {
-    private final ChatMessageRepository repository;
+    private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomService chatRoomService;
 
-    public ChatMessageService(ChatMessageRepository repository, ChatRoomService chatRoomService) {
-        this.repository = repository;
+    public ChatMessageService(ChatMessageRepository chatMessageRepository, ChatRoomService chatRoomService) {
+        this.chatMessageRepository = chatMessageRepository;
         this.chatRoomService = chatRoomService;
     }
 
     public ChatMessage save(ChatMessage chatMessage) {
         chatMessage.setStatus(EMessageStatus.RECEIVED);
-        repository.save(chatMessage);
+        chatMessageRepository.save(chatMessage);
         return chatMessage;
     }
 
     public long countNewMessages(String senderId, String recipientId) {
-        return repository.countBySenderIdAndRecipientIdAndStatus(
+        return chatMessageRepository.countBySenderIdAndRecipientIdAndStatus(
                 senderId, recipientId, EMessageStatus.RECEIVED);
     }
 
     public List<ChatMessage> findChatMessages(String senderId, String recipientId) {
-        var chatId = chatRoomService.getChatId(senderId, recipientId, false);
+        String chatId = chatRoomService.getChatId(senderId, recipientId, false);
 
-        var messages =
-                chatId.map(cId -> repository.findByChatId(cId)).orElse(new ArrayList<>());
+        List<ChatMessage> chatMessages = chatMessageRepository.findByChatId(chatId).orElse(new ArrayList<>());
 
-        if(messages.size() > 0) {
+        if (chatMessages.size() > 0) {
             updateStatuses(senderId, recipientId, EMessageStatus.DELIVERED);
         }
 
-        return messages;
+        return chatMessages;
     }
 
     public ChatMessage findById(String id) {
-        return repository
+        return chatMessageRepository
                 .findById(id)
                 .map(chatMessage -> {
                     chatMessage.setStatus(EMessageStatus.DELIVERED);
-                    return repository.save(chatMessage);
+                    return chatMessageRepository.save(chatMessage);
                 })
                 .orElseThrow(() ->
                         new ResourceNotFoundException("can't find message (" + id + ")"));
     }
 
     public void updateStatuses(String senderId, String recipientId, EMessageStatus status) {
-        Query query = new Query(
-                Criteria
-                        .where("senderId").is(senderId)
-                        .and("recipientId").is(recipientId));
-        Update update = Update.update("status", status);
-        mongoOperations.updateMulti(query, update, ChatMessage.class);
+        ChatMessage sendedMessage = chatMessageRepository.findBySenderId(senderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sender doesnt exist"));
+        ChatMessage receivedMessage = chatMessageRepository.findByRecipientId(recipientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipient doesnt exist"));
+
+        sendedMessage.setStatus(EMessageStatus.DELIVERED);
+        receivedMessage.setStatus(EMessageStatus.RECEIVED);
+
+        chatMessageRepository.save(sendedMessage);
+        chatMessageRepository.save(receivedMessage);
+
     }
+}

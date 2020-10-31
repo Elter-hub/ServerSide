@@ -2,27 +2,23 @@ package com.example.demo.services.chat;
 
 import com.example.demo.models.chat.ChatRoom;
 import com.example.demo.repository.chat.ChatRoomRepository;
-import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ChatRoomService {
 
-    @Autowired
-    private ChatRoomRepository chatRoomRepository;
+    @Autowired private ChatRoomRepository chatRoomRepository;
 
-    public Optional<String> getChatId(
+    public String getChatId(
             String senderId, String recipientId, boolean createIfNotExist) {
 
         return chatRoomRepository
                 .findBySenderIdAndRecipientId(senderId, recipientId)
                 .map(ChatRoom::getChatId)
-                .or(() -> {
-                    if (!createIfNotExist) {
-                        return Optional.empty();
+                .orElseGet(() -> {
+                    if(!createIfNotExist) {
+                        return  "";
                     }
                     String  chatId =
                             String.format("%s_%s", senderId, recipientId);
@@ -43,7 +39,8 @@ public class ChatRoomService {
                     chatRoomRepository.save(senderRecipient);
                     chatRoomRepository.save(recipientSender);
 
-                    return Optional.of(chatId);
+                    return chatId;
                 });
     }
 }
+

@@ -5,7 +5,6 @@ import com.example.demo.dto.request.PasswordRecoverRequest;
 import com.example.demo.dto.request.SendMessageRequest;
 import com.example.demo.dto.request.UserChangePasswordRequest;
 import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.dto.response.UserMessagesResponse;
 import com.example.demo.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +18,12 @@ public class UserController {
     private final UserRecoverPasswordService userRecoverPasswordService;
     private final ChangeImageUrlService changeImageUrlService;
     private final EmailSenderService emailSenderService;
-    private final UserMessagesService userMessagesService;
 
-    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService, ChangeImageUrlService changeImageUrlService, EmailSenderService emailSenderService, UserMessagesService userMessagesService) {
+    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService, ChangeImageUrlService changeImageUrlService, EmailSenderService emailSenderService) {
         this.userChangePasswordService = userChangePasswordService;
         this.userRecoverPasswordService = userRecoverPasswordService;
         this.changeImageUrlService = changeImageUrlService;
         this.emailSenderService = emailSenderService;
-        this.userMessagesService = userMessagesService;
     }
 
     //10 Hibernate queries
@@ -53,23 +50,5 @@ public class UserController {
         return this.changeImageUrlService.changeImageUrl(url.getImageUrl(), url.getUserEmail());
     }
 
-    @PostMapping("send-message")
-    public ResponseEntity<UserMessagesResponse> sendMessage(@RequestBody SendMessageRequest messageRequest) {
-        return this.userMessagesService.userSendMessage(messageRequest.getUserEmail(),
-                messageRequest.getSubject(),
-                messageRequest.getMessage());
-    }
 
-    @GetMapping("messages")
-    public ResponseEntity<UserMessagesResponse> messages(@RequestHeader(value = "Email") String  messageRequest) {
-        return this.userMessagesService.getMessages(messageRequest);
-    }
-
-    @PostMapping("respond-message")
-    public ResponseEntity<UserMessagesResponse> respondMessage(@RequestBody SendMessageRequest messageRequest) {
-        return this.userMessagesService.userResponseMessage(messageRequest.getUserEmail(),
-                messageRequest.getSubject(),
-                messageRequest.getMessage(),
-                messageRequest.getMessageId());
-    }
 }

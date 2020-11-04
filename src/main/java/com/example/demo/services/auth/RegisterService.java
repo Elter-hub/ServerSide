@@ -39,9 +39,6 @@ public class RegisterService {
 
 
     public ResponseEntity<MessageResponse> registerUser(SignupRequest request) {
-        // checking for uniqueness
-        // should be replaced with annotation for conciseness
-        // TODO create custom validator for field uniqueness
         if (userRepository.existsByUserNickName(request.getUserNickName())) {
             return ResponseEntity
                     .badRequest()
@@ -54,8 +51,6 @@ public class RegisterService {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        //Cant create without builder cause id is autoincrement
-        // Additional constructor excluding field Id takes lot of space
         User user = User.builder()
                 .userName(request.getUserName())
                 .userLastName(request.getUserLastName())
@@ -64,17 +59,13 @@ public class RegisterService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .age(request.getAge())
                 .sex(request.getSex())
-                //default image, then on client side user can change
                 .imageUrl("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.e1KNYwnuhNwNj7_-98yTRwHaF7%26pid%3DApi&f=1")
                 .createdDate(LocalDateTime.now())
                 .build();
 
-        //By default all users get ROLE_USER
         Set<String> strRoles = request.getRole();
         Set<Role> roles = new HashSet<>();
 
-        //Dont quite understand next lines
-        //Always true ⬇⬇⬇⬇⬇ when registering from Client side
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));

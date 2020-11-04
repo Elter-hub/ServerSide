@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import com.example.demo.dto.request.ChangeImageRequest;
 import com.example.demo.dto.request.PasswordRecoverRequest;
-import com.example.demo.dto.request.SendMessageRequest;
 import com.example.demo.dto.request.UserChangePasswordRequest;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.services.*;
@@ -19,14 +18,14 @@ public class UserController {
     private final ChangeImageUrlService changeImageUrlService;
     private final EmailSenderService emailSenderService;
 
-    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService, ChangeImageUrlService changeImageUrlService, EmailSenderService emailSenderService) {
+    public UserController(UserChangePasswordService userChangePasswordService, UserRecoverPasswordService userRecoverPasswordService,
+                          ChangeImageUrlService changeImageUrlService, EmailSenderService emailSenderService) {
         this.userChangePasswordService = userChangePasswordService;
         this.userRecoverPasswordService = userRecoverPasswordService;
         this.changeImageUrlService = changeImageUrlService;
         this.emailSenderService = emailSenderService;
     }
 
-    //10 Hibernate queries
     @PostMapping("/change-password")
     public ResponseEntity<MessageResponse> checkUserOldPassword(@RequestBody UserChangePasswordRequest userChangePasswordRequest) {
         ResponseEntity<MessageResponse> checkAndForgotPassword = userChangePasswordService.checkOldPasswordValidity(userChangePasswordRequest.getUserEmail(),
@@ -37,18 +36,14 @@ public class UserController {
                 userChangePasswordRequest.getNewPassword());
     }
 
-    // 7 Queries
     @PostMapping("/confirm-password")
     public ResponseEntity<MessageResponse> confirmUserChangePassword(@RequestBody PasswordRecoverRequest passwordRecoverRequest) {
         return userRecoverPasswordService.confirmPasswordChanges(passwordRecoverRequest.getEmailForRecoveringPassword(),
                 passwordRecoverRequest.getTokenForRecoveringPassword());
-
     }
 
     @PutMapping("change-image")
     public ResponseEntity<MessageResponse> changeUserImageUrl(@RequestBody ChangeImageRequest url) {
         return this.changeImageUrlService.changeImageUrl(url.getImageUrl(), url.getUserEmail());
     }
-
-
 }

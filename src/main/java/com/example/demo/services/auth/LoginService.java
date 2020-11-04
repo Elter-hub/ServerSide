@@ -55,7 +55,7 @@ public class LoginService {
 
         User user = userRepository.findByEmailIgnoreCase(email);
         user.setRefreshJwtToken(encodedRefreshJwt);
-        user.setRefreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiration));
+        user.setRefreshExpiration(LocalDateTime.now().plusNanos(refreshExpiration));
         userRepository.save(userRepository.findByEmailIgnoreCase(email));
 
         List<String> roles = userDetails.getAuthorities().stream()

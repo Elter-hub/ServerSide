@@ -56,8 +56,6 @@ public class UserChangePasswordService {
                 "To recover password please click in the link below  : "
                         + "http://localhost:4200/user-change-password?token=" + passwordRecoverToken.getPasswordRecoverToken() +
                         "&email=" + user.getEmail());
-        ;
-
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
     }
 }

@@ -77,7 +77,6 @@ public class ItemService {
     public ResponseEntity<?> buyItems(String userEmail, ArrayList<Item> items,
                                       ArrayList<Integer> quantities) {
         User user = userRepository.findByEmailIgnoreCase(userEmail);
-//        user.getCart().clear();
         for (int i = 0; i < items.size(); i++){
             Item item = itemRepository.findByItemId(items.get(i).getItemId()).get();
             item.setQuantity(item.getQuantity() - quantities.get(i));

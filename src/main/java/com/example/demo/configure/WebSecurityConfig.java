@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -30,7 +29,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/cancel-promote-item",
             "/delete-item",
             "/change-quantity-item",
-            "/ws/**"
     };
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -76,8 +74,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                     .antMatchers("/api/auth/**").permitAll()
-                    .antMatchers("/stomp").permitAll()
-                //🤔 cant figure out why on method @PreAuthorize("hasRole('Admin')" throwing NPE
                     .antMatchers(AUTH_ADMIN_WHITELIST).hasRole("ADMIN")
                     .anyRequest().authenticated();
 

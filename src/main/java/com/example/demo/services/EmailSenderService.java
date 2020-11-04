@@ -33,6 +33,4 @@ public class EmailSenderService {
         mailMessage.setText(text);
         sendEmail(mailMessage);
     }
-
-
 }

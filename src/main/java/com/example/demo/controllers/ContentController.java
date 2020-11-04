@@ -1,14 +1,10 @@
 package com.example.demo.controllers;
 
-import com.example.demo.dto.request.ChangeImageRequest;
 import com.example.demo.dto.request.ChangeItemRequest;
 import com.example.demo.dto.request.PostItemRequest;
 import com.example.demo.models.content.Item;
 import com.example.demo.models.enums.ItemType;
 import com.example.demo.services.content.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,11 +27,8 @@ public class ContentController {
     }
 
     @PostMapping("/add-item")
-//    @PreAuthorize("hasRole('ADMIN')") not working but
-//                        .antMatchers("/content/add-item").hasRole("ADMIN") working....
-
     private void postWhiskey(@RequestBody PostItemRequest request) {
-        System.out.println(itemService); // = null WTF???
+        System.out.println(itemService);
        itemService.postItem(request);
     }
 

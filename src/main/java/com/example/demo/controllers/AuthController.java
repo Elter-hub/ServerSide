@@ -39,12 +39,10 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    // 2 queries
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return loginService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
     }
-        // 7 Hibernate queries 🧰
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return registerService.registerUser(signUpRequest);
@@ -60,7 +58,6 @@ public class AuthController {
                 "Redirect logout!"));
     }
 
-    //4 queries
     @PostMapping("/confirm")
     public ResponseEntity<MessageResponse> confirmUserAccount(@RequestBody EmailConfirmationRequest requestEmailToken) {
         EmailConfirmationToken token = emailConfirmationTokenRepository

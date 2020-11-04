@@ -18,6 +18,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmailIgnoreCase(String emailId);
     Boolean existsByUserNickName(String username);
     Boolean existsByEmail(String email);
-    @Query(nativeQuery = true, value = "select * from users u join user_roles ur on u.id = ur.user_id where ur.role_id = 3" )
-    User findAdmin();
 }

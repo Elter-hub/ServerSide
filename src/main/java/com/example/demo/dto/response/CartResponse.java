@@ -14,5 +14,4 @@ import java.util.Set;
 public class CartResponse {
     private Set<Item> items;
     private Collection<Integer> quantities;
-//    private Map<Item, Integer> cart;
 }

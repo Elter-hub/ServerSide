@@ -21,27 +21,22 @@ public class SignupRequest {
     private String userLastName;
 
     @NotBlank
-//    @Column(unique = true)
-    // when creating a Bean it's check for duplicates
     private String userNickName;
 
     @NotBlank
     @Size(max = 50)
-//    @Email  Shit like me@mail not allowed
     @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b")
-//    @Column(unique = true)  // when creating an Object it's check for duplicates
     private String email;
 
-    @JsonIgnore // not sure
+    @JsonIgnore
     private Set<String> role;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")  //// not sure if correct
-//    @JsonIgnore
+    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String password;
 
     @NotNull
-    @Min(12)  // somehow combine
+    @Min(12)
     @Max(80)
     private int age;
 

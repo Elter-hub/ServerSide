@@ -1,8 +1,5 @@
 package com.example.demo.models.content;
 
-import com.example.demo.models.User;
-import com.example.demo.models.enums.EToken;
-import com.example.demo.models.enums.ItemType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,10 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter

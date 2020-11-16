@@ -57,9 +57,10 @@ public class UserRecoverPasswordService {
         PasswordRecoverToken passwordRecoverToken = tokenActions(user, tokenActionsRepository, passwordRecoverTokenRepository);
         emailSenderService.sendEmail(user.getEmail(), "Password recovering ",
 
-                "To recover password please click visit the link below  : "
+                "To recover password please click visit the link  : "
                         + "http://localhost:4200/change-password?token=" + passwordRecoverToken.getPasswordRecoverToken()
-                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken());
+                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken()
+                        + "\n or enter this token " + passwordRecoverToken.getPasswordRecoverToken());
 
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
 

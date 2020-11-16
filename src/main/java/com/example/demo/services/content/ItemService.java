@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +50,20 @@ public class ItemService {
         itemRepository.save(newItem);
     }
 
-    public ResponseEntity<?> addItem(String userEmail, Long itemId) {
+    public ResponseEntity<?> addItem(String userEmail, Long itemId, boolean addOrRemove) {
         Item item = itemRepository.findByItemId(itemId).orElseThrow(() -> new RuntimeException("Item doesnt exist"));
         User user = userRepository.findByEmailIgnoreCase(userEmail);
 
         if (user.getCart().containsKey(item)) {
-            user.getCart().put(item, user.getCart().get(item) + 1);
+            int coefficient = addOrRemove ? 1 : -1;
+            item.setAddedToCart(item.getAddedToCart() + coefficient);
+            if (item.getAddedToCart() == 0){
+                user.getCart().remove(item);
+            }else {
+                user.getCart().put(item, user.getCart().get(item) + coefficient);
+            }
         } else {
+            item.setAddedToCart(1);
             user.getCart().put(item, 1);
         }
 
@@ -77,7 +85,7 @@ public class ItemService {
     public ResponseEntity<?> buyItems(String userEmail, ArrayList<Item> items,
                                       ArrayList<Integer> quantities) {
         User user = userRepository.findByEmailIgnoreCase(userEmail);
-        for (int i = 0; i < items.size(); i++){
+        for (int i = 0; i < items.size(); i++) {
             Item item = itemRepository.findByItemId(items.get(i).getItemId()).get();
             item.setQuantity(item.getQuantity() - quantities.get(i));
             user.getCart().put(item, quantities.get(i));
@@ -87,15 +95,15 @@ public class ItemService {
         return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
 
-    public Item promoteItem(Item item, Integer newPrice){
+    public Item promoteItem(Item item, Integer newPrice) {
         Item item1 = itemRepository.findByItemId(item.getItemId()).get();
-        item1.setDiscount((int) Math.round(100 - (double) newPrice/item1.getPrice()*100));
+        item1.setDiscount((int) Math.round(100 - (double) newPrice / item1.getPrice() * 100));
         item1.setNewPrice(newPrice);
         itemRepository.save(item1);
         return item1;
     }
 
-    public Item cancelPromoteItem(Item item){
+    public Item cancelPromoteItem(Item item) {
         Item item1 = itemRepository.findByItemId(item.getItemId()).get();
         item1.setPrice(item1.getPrice());
         item1.setDiscount(0);
@@ -104,11 +112,11 @@ public class ItemService {
     }
 
     @Transactional
-    public void deleteItem(Item item){
+    public void deleteItem(Item item) {
         itemRepository.deleteByItemId(item.getItemId());
     }
 
-    public Item changeItemQuantity(Item item, Integer quantity){
+    public Item changeItemQuantity(Item item, Integer quantity) {
         Item item1 = itemRepository.findByItemId(item.getItemId()).get();
         item1.setQuantity(item1.getQuantity() + quantity);
         itemRepository.save(item1);

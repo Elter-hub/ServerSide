@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/content")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 public class ContentController {
 
     private final ItemService itemService;

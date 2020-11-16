@@ -14,4 +14,6 @@ public class AddItemRequest {
 
     @NotBlank
     private Long itemId;
+
+    private boolean addOrRemove;
 }

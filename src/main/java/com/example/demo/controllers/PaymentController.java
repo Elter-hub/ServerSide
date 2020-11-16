@@ -5,14 +5,12 @@ import com.example.demo.services.content.ItemService;
 import com.example.demo.services.payment.StripeClientService;
 import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RequestMapping("/payment")
 public class PaymentController {
 
@@ -29,7 +27,7 @@ public class PaymentController {
     public Charge chargeCard(HttpServletRequest request, @RequestBody BuyItemsRequest items) throws Exception {
         String token = request.getHeader("token");
         Double amount = Double.parseDouble(request.getHeader("amount"));
-        itemService.buyItems(request.getHeader("email"), items.getItems(), items.getQuantities());
+//        itemService.buyItems(request.getHeader("email"), items.getItems(), items.getQuantities());
         return this.stripeClientService.chargeCreditCard(token, amount);
     }
 }

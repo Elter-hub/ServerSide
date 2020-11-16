@@ -35,6 +35,9 @@ public class Item {
     @NotBlank
     private String itemName;
 
+    @NotBlank
+    private Integer addedToCart;
+
     @NotNull
     @Column(name = "type")
     private String type;

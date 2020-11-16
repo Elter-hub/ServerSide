@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RestController
 @RequestMapping("cart")
 public class CartController {
@@ -22,7 +22,7 @@ public class CartController {
 
     @PatchMapping("/add-item")
     public ResponseEntity<?> addItem(@RequestBody AddItemRequest addItemRequest){
-        return itemService.addItem(addItemRequest.getUserEmail(), addItemRequest.getItemId());
+        return itemService.addItem(addItemRequest.getUserEmail(), addItemRequest.getItemId(), addItemRequest.isAddOrRemove());
     }
 
     @PatchMapping("/remove-item")

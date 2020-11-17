@@ -26,7 +26,7 @@ public class Item {
     @Positive
     private Integer newPrice;
 
-    @Positive
+    @PositiveOrZero
     private Integer discount;
 
     @PositiveOrZero
@@ -35,7 +35,6 @@ public class Item {
     @NotBlank
     private String itemName;
 
-    @NotBlank
     private Integer addedToCart;
 
     @NotNull
@@ -48,6 +47,5 @@ public class Item {
     @NotBlank
     private String description;
 
-    @NotBlank
     private Double stars;
 }

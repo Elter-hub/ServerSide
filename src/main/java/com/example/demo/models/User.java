@@ -62,7 +62,6 @@ public class User {
     @Pattern(regexp = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/*%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String imageUrl;
 
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
 
     @ElementCollection

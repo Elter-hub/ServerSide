@@ -4,7 +4,7 @@ import com.example.demo.dto.response.RefreshJwtResponse;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtTokenProvider;
-import com.example.demo.services.UserDetailsServiceImpl;
+import com.example.demo.services.implementation.UserDetailsServiceImpl;
 import com.example.demo.services.auth.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

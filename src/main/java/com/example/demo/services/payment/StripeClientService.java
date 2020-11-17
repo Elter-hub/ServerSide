@@ -16,10 +16,10 @@ public class StripeClientService {
     @Value("${app.stripe.secret.key}")
     private String SECRET_KEY;
 
-    private final ItemService itemService;
+    private final ItemService itemServiceImpl;
 
-    StripeClientService(ItemService itemService) {
-        this.itemService = itemService;
+    StripeClientService(ItemService itemServiceImpl) {
+        this.itemServiceImpl = itemServiceImpl;
         Stripe.apiKey = SECRET_KEY;
     }
 

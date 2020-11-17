@@ -1,4 +1,4 @@
-package com.example.demo.services;
+package com.example.demo.services.implementation;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import com.example.demo.models.User;
 import com.example.demo.models.content.Item;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

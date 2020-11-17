@@ -14,10 +14,10 @@ public class UserChangePasswordRequest {
     private String userEmail;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$")
     private String oldPassword;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$")
     private String newPassword;
 }

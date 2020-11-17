@@ -5,7 +5,7 @@ import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtTokenProvider;
-import com.example.demo.services.UserDetailsImpl;
+import com.example.demo.services.implementation.UserDetailsImpl;
 import com.example.demo.services.auth.LoginService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

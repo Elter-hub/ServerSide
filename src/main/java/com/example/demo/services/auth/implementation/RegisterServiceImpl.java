@@ -33,13 +33,13 @@ class RegisterServiceImpl implements RegisterService {
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
                                EmailConfirmationTokenRepository emailConfirmationTokenRepository,
-                               TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderService, Environment environment) {
+                               TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderServiceImpl, Environment environment) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.emailConfirmationTokenRepository = emailConfirmationTokenRepository;
         this.tokenActionsRepository = tokenActionsRepository;
-        this.emailSenderService = emailSenderService;
+        this.emailSenderService = emailSenderServiceImpl;
         this.environment = environment;
     }
 

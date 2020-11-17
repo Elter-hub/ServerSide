@@ -4,7 +4,10 @@ import com.example.demo.dto.request.ChangeImageRequest;
 import com.example.demo.dto.request.PasswordRecoverRequest;
 import com.example.demo.dto.request.UserChangePasswordRequest;
 import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.services.*;
+import com.example.demo.services.ChangeImageUrlService;
+import com.example.demo.services.EmailSenderService;
+import com.example.demo.services.UserChangePasswordService;
+import com.example.demo.services.UserRecoverPasswordService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -9,10 +9,12 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.services.EmailSenderService;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,20 +27,22 @@ public class RegisterService {
     private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final TokenActionsRepository tokenActionsRepository;
     private final EmailSenderService emailSenderService;
+    private final Environment environment;
 
     public RegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository,
                            EmailConfirmationTokenRepository emailConfirmationTokenRepository,
-                           TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderService) {
+                           TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderService, Environment environment) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.emailConfirmationTokenRepository = emailConfirmationTokenRepository;
         this.tokenActionsRepository = tokenActionsRepository;
         this.emailSenderService = emailSenderService;
+        this.environment = environment;
     }
 
 
-    public ResponseEntity<MessageResponse> registerUser(SignupRequest request) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid SignupRequest request) {
         if (userRepository.existsByUserNickName(request.getUserNickName())) {
             return ResponseEntity
                     .badRequest()
@@ -58,8 +62,7 @@ public class RegisterService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .age(request.getAge())
-                .sex(request.getSex())
-                .imageUrl("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.e1KNYwnuhNwNj7_-98yTRwHaF7%26pid%3DApi&f=1")
+                .imageUrl(environment.getProperty("app.default.image"))
                 .createdDate(LocalDateTime.now())
                 .build();
 
@@ -100,11 +103,10 @@ public class RegisterService {
         userRepository.save(user);
         EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(user);
         emailConfirmationTokenRepository.save(emailConfirmationToken);
-        //Additional entity consisting of EmailConfirmation and PasswordRecover tokens
         tokenActionsRepository.save(new TokenActions(emailConfirmationToken, user));
 
-        emailSenderService.sendEmail(user.getEmail(), "Complete Registration!", "To confirm your account, please click here : "
-                + "http://localhost:4200/confirm?token=" + emailConfirmationToken.getEmailConfirmationToken());
+        emailSenderService.sendEmail(user.getEmail(), "Complete Registration!",
+                environment.getProperty("app.confirm.account") + emailConfirmationToken.getEmailConfirmationToken());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

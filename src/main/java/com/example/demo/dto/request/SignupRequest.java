@@ -16,7 +16,7 @@ public class SignupRequest {
     private String userName;
 
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z]+", message = "Only Letters")
     @Size(min = 3, max = 20)
     private String userLastName;
 
@@ -32,15 +32,11 @@ public class SignupRequest {
     private Set<String> role;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$")
     private String password;
 
     @NotNull
     @Min(12)
     @Max(80)
     private int age;
-
-    @NotBlank
-    @Size(max = 20)
-    private String sex;
 }

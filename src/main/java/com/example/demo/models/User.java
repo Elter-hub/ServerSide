@@ -41,17 +41,12 @@ public class User {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")  //// not sure if correct
     private String password;
 
     @NotNull
-    @Min(12)  // somehow combine
+    @Min(12)
     @Max(80)
     private Integer age;
-
-    @NotBlank
-    @Size(max = 20)
-    private String sex;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
@@ -67,8 +62,6 @@ public class User {
     @Pattern(regexp = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/*%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String imageUrl;
 
-    //Store new password separately, if user confirm by email this password becomes primary
-    @NotBlank
     @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])")
     private String temporalPassword;
 
@@ -79,9 +72,7 @@ public class User {
     @Column(name = "quantity")
     private Map<Item, Integer> cart = new HashMap<>();
 
-    @NotBlank
     private String refreshJwtToken;
 
-    @NotBlank
     private LocalDateTime refreshExpiration;
 }

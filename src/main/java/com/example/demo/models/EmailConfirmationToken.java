@@ -7,7 +7,6 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,7 +26,6 @@ public class EmailConfirmationToken {
     @Column(name = "userEmail")
     private String emailConfirmationTokenUserEmail;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private EToken tokenType = EToken.E;

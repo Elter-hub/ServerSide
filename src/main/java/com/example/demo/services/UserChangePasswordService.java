@@ -6,6 +6,7 @@ import com.example.demo.models.User;
 import com.example.demo.repository.PasswordRecoverTokenRepository;
 import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,19 @@ public class UserChangePasswordService {
     private final PasswordRecoverTokenRepository passwordRecoverTokenRepository;
     private final TokenActionsRepository tokenActionsRepository;
     private final EmailSenderService emailSenderService;
+    private final Environment environment;
 
-    public UserChangePasswordService(UserRepository userRepository, UserRecoverPasswordService userRecoverPasswordService, PasswordRecoverTokenRepository passwordRecoverTokenRepository, TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderService) {
+
+    public UserChangePasswordService(UserRepository userRepository, UserRecoverPasswordService userRecoverPasswordService, PasswordRecoverTokenRepository passwordRecoverTokenRepository, TokenActionsRepository tokenActionsRepository, EmailSenderService emailSenderService, Environment environment) {
         this.userRepository = userRepository;
         this.userRecoverPasswordService = userRecoverPasswordService;
         this.passwordRecoverTokenRepository = passwordRecoverTokenRepository;
         this.tokenActionsRepository = tokenActionsRepository;
         this.emailSenderService = emailSenderService;
+        this.environment = environment;
     }
 
     public ResponseEntity<MessageResponse> checkOldPasswordValidity(String userEmail, String userOldPassword) {
-        //User always exists cause its logged in!
         User user = userRepository.findByEmailIgnoreCase(userEmail);
         if (!BCrypt.checkpw(userOldPassword, user.getPassword())) {
             return ResponseEntity
@@ -42,19 +45,16 @@ public class UserChangePasswordService {
     public ResponseEntity<MessageResponse> forgotPassword(String email) {
         User user = userRepository.findByEmailIgnoreCase(email);
         Optional<PasswordRecoverToken> tokenByEmailOptional = passwordRecoverTokenRepository.findByUserEmailForPasswordRecovering(user.getEmail());
-        // Dont send new token if is present and less than 30min alive
         if (tokenByEmailOptional.isPresent() && !userRecoverPasswordService.isTokenExpired(tokenByEmailOptional.get().getPasswordConfirmationTokenCreatedDate())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("PLease follow the link in the email we send you"));
         }
 
-        //Additional entity for convenience 
         PasswordRecoverToken passwordRecoverToken = userRecoverPasswordService.tokenActions(user,
                 tokenActionsRepository, passwordRecoverTokenRepository);
         emailSenderService.sendEmail(user.getEmail(), "Password recovering ",
-                "To recover password please click in the link below  : "
-                        + "http://localhost:4200/user-change-password?token=" + passwordRecoverToken.getPasswordRecoverToken()
+                environment.getProperty("app.recover.password") + passwordRecoverToken.getPasswordRecoverToken()
                         + "&email=" + user.getEmail()
                         + "\n or enter this token " + passwordRecoverToken.getPasswordRecoverToken());
 

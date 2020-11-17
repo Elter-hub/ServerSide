@@ -3,7 +3,6 @@ package com.example.demo.dto.request;
 import com.example.demo.models.content.Item;
 import lombok.Getter;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 

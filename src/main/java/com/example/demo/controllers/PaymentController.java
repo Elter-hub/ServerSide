@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RequestMapping("/payment")
 public class PaymentController {
 

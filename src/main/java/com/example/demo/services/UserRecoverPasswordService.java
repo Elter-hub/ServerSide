@@ -7,6 +7,7 @@ import com.example.demo.models.User;
 import com.example.demo.repository.PasswordRecoverTokenRepository;
 import com.example.demo.repository.TokenActionsRepository;
 import com.example.demo.repository.UserRepository;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,22 +27,23 @@ public class UserRecoverPasswordService {
     private final PasswordEncoder passwordEncoder;
     private final PasswordRecoverTokenRepository passwordRecoverTokenRepository;
     private final TokenActionsRepository tokenActionsRepository;
+    private final Environment environment;
 
     public UserRecoverPasswordService(UserRepository userRepository,
                                       EmailSenderService emailSenderService,
                                       PasswordEncoder passwordEncoder,
-                                      PasswordRecoverTokenRepository passwordRecoverTokenRepository, TokenActionsRepository tokenActionsRepository) {
+                                      PasswordRecoverTokenRepository passwordRecoverTokenRepository, TokenActionsRepository tokenActionsRepository, Environment environment) {
         this.userRepository = userRepository;
         this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
         this.passwordRecoverTokenRepository = passwordRecoverTokenRepository;
         this.tokenActionsRepository = tokenActionsRepository;
+        this.environment = environment;
     }
 
     public ResponseEntity<MessageResponse> forgotPassword(String email) {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(email));
-        //Can be invoked by unauthorized user who forgot password and can enter any email...
         if (!userOptional.isPresent()) {
             return ResponseEntity
                     .badRequest()
@@ -56,11 +58,8 @@ public class UserRecoverPasswordService {
         }
         PasswordRecoverToken passwordRecoverToken = tokenActions(user, tokenActionsRepository, passwordRecoverTokenRepository);
         emailSenderService.sendEmail(user.getEmail(), "Password recovering ",
-
-                "To recover password please click visit the link  : "
-                        + "http://localhost:4200/change-password?token=" + passwordRecoverToken.getPasswordRecoverToken()
-                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken()
-                        + "\n or enter this token " + passwordRecoverToken.getPasswordRecoverToken());
+                environment.getProperty("app.recover.password") + passwordRecoverToken.getPasswordRecoverToken()
+                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken());
 
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
 
@@ -71,19 +70,21 @@ public class UserRecoverPasswordService {
         Optional<User> userOptional = Optional
                 .ofNullable(userRepository.findByEmailIgnoreCase(emailForRecoveringPassword));
         if (!userOptional.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User with provided email doesnt exist!"));
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("User with provided email doesnt exist!"));
         }
 
         Optional<PasswordRecoverToken> passwordTokenOptional = Optional
                 .ofNullable(passwordRecoverTokenRepository.findByPasswordRecoverToken(token));
         if (!passwordTokenOptional.isPresent()) {
-            return ResponseEntity.badRequest().body(
-                    new MessageResponse("You already changed password. Invalid Token"));
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("You already changed password. Invalid Token"));
         }
 
         LocalDateTime tokenCreationDate = passwordTokenOptional.get().getPasswordConfirmationTokenCreatedDate();
         if (isTokenExpired(tokenCreationDate)) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Token Expired"));
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Token Expired"));
         }
 
         User user = userOptional.get();

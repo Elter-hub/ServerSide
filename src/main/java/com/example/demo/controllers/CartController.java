@@ -1,16 +1,10 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.request.AddItemRequest;
-import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.models.content.Item;
 import com.example.demo.services.content.ItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
-@CrossOrigin(origins = "http://localhost:8100", maxAge = 3600)
 @RestController
 @RequestMapping("cart")
 public class CartController {

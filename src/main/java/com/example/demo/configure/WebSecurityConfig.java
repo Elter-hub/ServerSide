@@ -5,6 +5,7 @@ import com.example.demo.security.jwt.AuthTokenFilter;
 import com.example.demo.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,20 +25,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
          jsr250Enabled = true,
          prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String[] AUTH_ADMIN_WHITELIST = {
-            "/promote-item",
-            "/cancel-promote-item",
-            "/delete-item",
-            "/change-quantity-item",
-    };
+    private final String[] AUTH_ADMIN_WHITELIST;
+    private final String[] PERMIT_ALL;
 
     private final UserDetailsServiceImpl userDetailsService;
-
+    private final Environment environment;
     private final AuthEntryPointJwt authEntryPointJwt;
 
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt) {
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, Environment environment, AuthEntryPointJwt authEntryPointJwt) {
         this.userDetailsService = userDetailsService;
+        this.environment = environment;
         this.authEntryPointJwt = authEntryPointJwt;
+        this.PERMIT_ALL = environment.getProperty("app.security.permitAll").split(", ");
+        this.AUTH_ADMIN_WHITELIST = environment.getProperty("app.security.admin").split(", ");
     }
 
     @Bean
@@ -73,8 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/api/**").permitAll()
-                    .antMatchers("/content/all-items").permitAll()
+                    .antMatchers(PERMIT_ALL).permitAll()
                     .antMatchers(AUTH_ADMIN_WHITELIST).hasRole("ADMIN")
                     .anyRequest().authenticated();
 

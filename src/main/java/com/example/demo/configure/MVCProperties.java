@@ -1,19 +1,22 @@
 package com.example.demo.configure;
 
+import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 public class MVCProperties implements WebMvcConfigurer {
 
-    //Need that only for stripe ⬇⬇⬇⬇
+    @Autowired Environment environment;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS")
+                .allowedOrigins(environment.getProperty("app.angular"))
+                .allowedOrigins(environment.getProperty("app.ionic"))
                 .allowCredentials(true);
     }
 }

@@ -1,23 +1,20 @@
 package com.example.demo.services.content;
 
-import com.example.demo.dto.request.ChangeItemRequest;
 import com.example.demo.dto.request.PostItemRequest;
 import com.example.demo.dto.response.CartResponse;
-import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.models.User;
 import com.example.demo.models.content.Item;
 import com.example.demo.models.enums.ItemType;
 import com.example.demo.repository.ItemRepository;
 import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @JsonSerialize
@@ -26,7 +23,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public ItemService(ItemRepository itemRepository, UserRepository userRepository) {
+    public ItemService(ItemRepository itemRepository, UserRepository userRepository, Environment environment) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
     }

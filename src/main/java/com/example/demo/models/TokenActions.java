@@ -16,10 +16,8 @@ public class TokenActions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tokenId;
 
-    @NotNull
     private String  emailConfirmationToken;
 
-    @NotNull
     private String  passwordRecoverToken;
 
     @NotNull

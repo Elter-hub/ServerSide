@@ -7,7 +7,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,7 +25,6 @@ public class PasswordRecoverToken {
     @Column(name = "userEmail")
     private String  userEmailForPasswordRecovering;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private EToken tokenType = EToken.P;

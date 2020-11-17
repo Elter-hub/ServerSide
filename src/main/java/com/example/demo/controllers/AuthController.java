@@ -27,7 +27,7 @@ public class AuthController {
     private final EmailConfirmationTokenRepository emailConfirmationTokenRepository;
     private final RegisterService registerService;
     private final RefreshTokenService refreshTokenService;
-
+    
     public AuthController(UserRepository userRepository, LoginService loginService,
                           EmailConfirmationTokenRepository emailConfirmationTokenRepository,
                           RegisterService registerService, RefreshTokenService refreshTokenService) {

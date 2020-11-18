@@ -56,12 +56,12 @@ class UserRecoverPasswordServiceImpl implements UserRecoverPasswordService {
         if (tokenByEmailOptional.isPresent() && !isTokenExpired(tokenByEmailOptional.get().getPasswordConfirmationTokenCreatedDate())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("PLease follow the link in the email we send you"));
+                    .body(new MessageResponse("Please follow the link in the email we send you"));
         }
         PasswordRecoverToken passwordRecoverToken = tokenActions(user, tokenActionsRepository, passwordRecoverTokenRepository);
         emailSenderServiceImpl.sendEmail(user.getEmail(), "Password recovering ",
-                environment.getProperty("app.recover.password") + passwordRecoverToken.getPasswordRecoverToken()
-                        + "&email=" + user.getEmail() + "\n Or enter your token" + passwordRecoverToken.getPasswordRecoverToken());
+                "\n Enter your validation token  🆕 🇹 🇴 🇰 🇪 🇳 " + passwordRecoverToken.getPasswordRecoverToken() + " 🇹 🇴 🇰 🇪 🇳");
+
 
         return ResponseEntity.ok(new MessageResponse("Check your email for further actions"));
 

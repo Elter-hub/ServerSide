@@ -72,6 +72,8 @@ class LoginServiceImpl implements LoginService {
                 userDetails.getUserLastName(),
                 userDetails.getUserNickName(),
                 userDetails.getImageUrl(),
-                new CartResponse(userDetails.getCart().keySet(), userDetails.getCart().values())));
+                new CartResponse(userDetails.getCart().keySet(), userDetails.getCart().values()),
+                userDetails.isConfirmEmail()
+                ));
     }
 }

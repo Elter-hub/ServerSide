@@ -3,6 +3,7 @@ package com.example.demo.dto.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.Set;
 import javax.validation.constraints.*;
@@ -11,7 +12,7 @@ import javax.validation.constraints.*;
 @Setter
 public class SignupRequest {
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Pattern(regexp = "[a-zA-Z]+", message = "Only Letters" )
     @Size(min = 3, max = 20)
     private String userName;
 
@@ -25,7 +26,7 @@ public class SignupRequest {
 
     @NotBlank
     @Size(max = 50)
-    @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b")
+    @Pattern(regexp = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b", message = "Should be valid email📧")
     private String email;
 
     @JsonIgnore

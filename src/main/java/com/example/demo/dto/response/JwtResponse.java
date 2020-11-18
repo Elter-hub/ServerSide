@@ -20,10 +20,11 @@ public class JwtResponse {
     private String imageUrl;
     private List<String> roles;
     private CartResponse cart;
+    private Boolean isEnabled;
 
     public JwtResponse(String accessToken, String refreshToken, Long id, String userName, String userEmail,
                        List<String> roles, Integer userAge, String userLastName, String userNickName,
-                       String imageUrl, CartResponse cart) {
+                       String imageUrl, CartResponse cart, Boolean isEnabled) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;
@@ -35,5 +36,6 @@ public class JwtResponse {
         this.userNickName = userNickName;
         this.imageUrl = imageUrl;
         this.cart = cart;
+        this.isEnabled = isEnabled;
     }
 }

@@ -27,9 +27,10 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final Map<Item, Integer> cart;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final boolean isConfirmEmail;
 
     public UserDetailsImpl(Long id, String username, String email, String userLastName, String userNickName, String refreshJwtToken, Integer age,
-                           String imageUrl, String password, Map<Item, Integer> cart, Collection<? extends GrantedAuthority> authorities) {
+                           String imageUrl, String password, Map<Item, Integer> cart, Collection<? extends GrantedAuthority> authorities, boolean isConfirmEmail) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -41,6 +42,7 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.cart = cart;
         this.authorities = authorities;
+        this.isConfirmEmail = isConfirmEmail;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -59,7 +61,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getImageUrl(),
                 user.getPassword(),
                 user.getCart(),
-                authorities);
+                authorities, user.isEnabled());
     }
 
     public Map<Item, Integer> getCart() {
@@ -84,6 +86,10 @@ public class UserDetailsImpl implements UserDetails {
 
     public Integer getAge() {
         return age;
+    }
+
+    public boolean isConfirmEmail() {
+        return isConfirmEmail;
     }
 
     @Override

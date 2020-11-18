@@ -108,7 +108,7 @@ class RegisterServiceImpl implements RegisterService {
         tokenActionsRepository.save(new TokenActions(emailConfirmationToken, user));
 
         emailSenderService.sendEmail(user.getEmail(), "Complete Registration!",
-                environment.getProperty("app.confirm.account") + emailConfirmationToken.getEmailConfirmationToken());
+                "Enter this token: " +  emailConfirmationToken.getEmailConfirmationToken());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

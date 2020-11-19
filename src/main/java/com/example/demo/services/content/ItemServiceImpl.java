@@ -2,29 +2,37 @@ package com.example.demo.services.content;
 
 import com.example.demo.dto.request.PostItemRequest;
 import com.example.demo.dto.response.CartResponse;
+import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.models.User;
 import com.example.demo.models.content.Item;
+import com.example.demo.models.content.ItemAnalytic;
+import com.example.demo.models.content.SoldItem;
 import com.example.demo.models.enums.ItemType;
+import com.example.demo.repository.ItemAnalyticRepository;
 import com.example.demo.repository.ItemRepository;
+import com.example.demo.repository.SoldItemRepository;
 import com.example.demo.repository.UserRepository;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 class ItemServiceImpl implements ItemService{
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final SoldItemRepository soldItemRepository;
+    private final ItemAnalyticRepository itemAnalyticRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, Environment environment) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, Environment environment, SoldItemRepository soldItemRepository, ItemAnalyticRepository itemAnalyticRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.soldItemRepository = soldItemRepository;
+        this.itemAnalyticRepository = itemAnalyticRepository;
     }
 
     public List<Item> getAllItems() {
@@ -78,17 +86,50 @@ class ItemServiceImpl implements ItemService{
         return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
 
-    public ResponseEntity<?> buyItems(String userEmail, ArrayList<Item> items,
-                                      ArrayList<Integer> quantities) {
-        User user = userRepository.findByEmailIgnoreCase(userEmail);
-        for (int i = 0; i < items.size(); i++) {
-            Item item = itemRepository.findByItemId(items.get(i).getItemId()).get();
-            item.setQuantity(item.getQuantity() - quantities.get(i));
-            user.getCart().put(item, quantities.get(i));
-            itemRepository.save(item);
-        }
-        userRepository.save(user);
-        return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
+    public ResponseEntity<?> buyItems(ArrayList<Item> items) {
+            items.forEach(item -> {
+                Optional<ItemAnalytic> itemAnalyticOptional = itemAnalyticRepository.findBySoldItemId(item.getItemId());
+                Optional<SoldItem> soldItemOptional = soldItemRepository.findByItemId(item.getItemId());
+                if (itemAnalyticOptional.isPresent()){
+                    itemAnalyticOptional.get()
+                            .setQuantity(itemAnalyticOptional.get().getQuantity() + item.getAddedToCart());
+                    if (soldItemOptional.isPresent()){
+                        if (soldItemOptional.get().getItemAnalytic().contains(itemAnalyticOptional.get())){
+                            soldItemOptional.get().getItemAnalytic().stream()
+                                    .filter(item1 -> item1.getItemName().equals(item.getItemName()))
+                                    .forEach(item1 -> item1.setQuantity(item1.getQuantity() + item.getAddedToCart()));
+                        }else {
+                            soldItemOptional.get().getItemAnalytic().add(itemAnalyticOptional.get());
+                        }
+                    }else {
+                        Set<ItemAnalytic> set = new TreeSet<>();
+                        set.add(itemAnalyticOptional.get());
+                        soldItemOptional = Optional.ofNullable(SoldItem.builder()
+                                .itemAnalytic(set)
+                                .itemName(item.getItemName())
+                                .itemId(item.getItemId())
+                                .build());
+                        soldItemRepository.save(soldItemOptional.get());
+                    }
+                } else {
+                     itemAnalyticOptional = Optional.ofNullable(ItemAnalytic.builder()
+                            .itemName(item.getItemName())
+                            .quantity(item.getAddedToCart())
+                            .timeWhenSold(LocalDateTime.now())
+                            .soldItemId(item.getItemId())
+                            .build());
+
+                    if (soldItemOptional.isPresent()){
+                        Set<ItemAnalytic> itemAnalytic1 = soldItemOptional.get().getItemAnalytic();
+                        itemAnalytic1.add(itemAnalyticOptional.get());
+                        soldItemOptional.get().setItemAnalytic(itemAnalytic1);
+                    }
+                }
+                itemAnalyticRepository.save(itemAnalyticOptional.get());
+                soldItemRepository.save(soldItemOptional.get());
+            });
+        return ResponseEntity.ok(new MessageResponse("Items sold"));
+
     }
 
     public Item promoteItem(Item item, Integer newPrice) {

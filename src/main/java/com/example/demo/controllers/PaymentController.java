@@ -5,6 +5,7 @@ import com.example.demo.services.content.ItemService;
 import com.example.demo.services.payment.StripeClientService;
 import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,9 @@ public class PaymentController {
     }
 
     @PostMapping("/charge")
+    @Transactional
     public Charge chargeCard(HttpServletRequest request, @RequestBody BuyItemsRequest items) throws Exception {
+        itemService.buyItems(items.getItems());
         String token = request.getHeader("token");
         Double amount = Double.parseDouble(request.getHeader("amount"));
 //        itemService.buyItems(request.getHeader("email"), items.getItems(), items.getQuantities());

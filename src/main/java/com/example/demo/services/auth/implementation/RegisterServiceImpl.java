@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -76,8 +77,8 @@ class RegisterServiceImpl implements RegisterService {
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
 //            Creating Admin
-//            Optional<Role> admin = roleRepository.findByName(ERole.ROLE_ADMIN);
-//            roles.add(admin.get());
+            Optional<Role> admin = roleRepository.findByName(ERole.ROLE_ADMIN);
+            roles.add(admin.get());
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
@@ -85,12 +86,6 @@ class RegisterServiceImpl implements RegisterService {
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
-
-                        break;
-                    case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
 
                         break;
                     default:

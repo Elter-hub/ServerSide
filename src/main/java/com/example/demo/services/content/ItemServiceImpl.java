@@ -88,44 +88,27 @@ class ItemServiceImpl implements ItemService{
 
     public ResponseEntity<?> buyItems(ArrayList<Item> items) {
             items.forEach(item -> {
-                Optional<ItemAnalytic> itemAnalyticOptional = itemAnalyticRepository.findBySoldItemId(item.getItemId());
                 Optional<SoldItem> soldItemOptional = soldItemRepository.findByItemId(item.getItemId());
-                if (itemAnalyticOptional.isPresent()){
-                    itemAnalyticOptional.get()
-                            .setQuantity(itemAnalyticOptional.get().getQuantity() + item.getAddedToCart());
-                    if (soldItemOptional.isPresent()){
-                        if (soldItemOptional.get().getItemAnalytic().contains(itemAnalyticOptional.get())){
-                            soldItemOptional.get().getItemAnalytic().stream()
-                                    .filter(item1 -> item1.getItemName().equals(item.getItemName()))
-                                    .forEach(item1 -> item1.setQuantity(item1.getQuantity() + item.getAddedToCart()));
-                        }else {
-                            soldItemOptional.get().getItemAnalytic().add(itemAnalyticOptional.get());
-                        }
-                    }else {
-                        Set<ItemAnalytic> set = new TreeSet<>();
-                        set.add(itemAnalyticOptional.get());
-                        soldItemOptional = Optional.ofNullable(SoldItem.builder()
-                                .itemAnalytic(set)
-                                .itemName(item.getItemName())
-                                .itemId(item.getItemId())
-                                .build());
-                        soldItemRepository.save(soldItemOptional.get());
-                    }
-                } else {
-                     itemAnalyticOptional = Optional.ofNullable(ItemAnalytic.builder()
+                ItemAnalytic itemAnalytic = ItemAnalytic.builder()
+                        .itemName(item.getItemName())
+                        .quantity(item.getAddedToCart())
+                        .timeWhenSold(LocalDateTime.now().minusHours(7))
+                        .soldItemId(item.getItemId())
+                        .build();
+                if (soldItemOptional.isPresent()){
+                    soldItemOptional.get().getItemAnalytic().add(itemAnalytic);
+                    soldItemOptional.get().setTotal(soldItemOptional.get().getTotal() + item.getAddedToCart());
+                }else {
+                    TreeSet<ItemAnalytic> itemAnalyticsSet = new TreeSet<>();
+                    itemAnalyticsSet.add(itemAnalytic);
+                    soldItemOptional = Optional.ofNullable(SoldItem.builder()
+                            .itemId(item.getItemId())
                             .itemName(item.getItemName())
-                            .quantity(item.getAddedToCart())
-                            .timeWhenSold(LocalDateTime.now())
-                            .soldItemId(item.getItemId())
+                            .itemAnalytic(itemAnalyticsSet)
+                            .total(item.getAddedToCart())
                             .build());
-
-                    if (soldItemOptional.isPresent()){
-                        Set<ItemAnalytic> itemAnalytic1 = soldItemOptional.get().getItemAnalytic();
-                        itemAnalytic1.add(itemAnalyticOptional.get());
-                        soldItemOptional.get().setItemAnalytic(itemAnalytic1);
-                    }
                 }
-                itemAnalyticRepository.save(itemAnalyticOptional.get());
+                itemAnalyticRepository.save(itemAnalytic);
                 soldItemRepository.save(soldItemOptional.get());
             });
         return ResponseEntity.ok(new MessageResponse("Items sold"));

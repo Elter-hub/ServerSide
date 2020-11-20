@@ -19,6 +19,7 @@ public class SoldItem {
     private Long itemId;
 
     private String itemName;
+    private Integer total;
 
     @OneToMany(mappedBy = "soldItem")
     private Set<ItemAnalytic> itemAnalytic;

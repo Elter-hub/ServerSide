@@ -1,8 +1,9 @@
 package com.example.demo.controllers;
 
-import com.example.demo.dto.response.TotalSellingResponse;
+import com.example.demo.dto.response.AnalyticResponse;
 import com.example.demo.services.analytic.AnalyticService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,12 @@ public class AnalyticController {
     }
 
     @GetMapping("/total")
-    ResponseEntity<TotalSellingResponse> getTotalSells(){
+    ResponseEntity<AnalyticResponse> getTotalSells(){
         return this.analyticService.getTotalSells();
+    }
+
+    @GetMapping("/each-item")
+    ResponseEntity<AnalyticResponse> getEachItemSells(){
+        return this.analyticService.getEachItemSells();
     }
 }

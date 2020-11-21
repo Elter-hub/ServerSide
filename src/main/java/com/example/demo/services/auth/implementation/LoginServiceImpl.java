@@ -55,7 +55,12 @@ class LoginServiceImpl implements LoginService {
 
         User user = userRepository.findByEmailIgnoreCase(email);
         user.setRefreshJwtToken(encodedRefreshJwt);
-        user.setRefreshExpiration(LocalDateTime.now().plusNanos(refreshExpiration));
+        user.setRefreshExpiration(LocalDateTime.now().plusSeconds(refreshExpiration));
+        System.out.println("🥰🥰🥰🥰");
+        System.out.println(user.getRefreshExpiration());
+        System.out.println(LocalDateTime.now());
+        System.out.println("🥰🥰🥰🥰");
+
         userRepository.save(userRepository.findByEmailIgnoreCase(email));
 
         List<String> roles = userDetails.getAuthorities().stream()

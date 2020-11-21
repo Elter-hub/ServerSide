@@ -4,9 +4,11 @@ import com.example.demo.models.content.ItemAnalytic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ItemAnalyticRepository extends JpaRepository<ItemAnalytic, String > {
-    Optional<ItemAnalytic> findBySoldItemId(Long itemId);
+    Optional<List<ItemAnalytic>> findBySoldItemId(Long itemId);
+    List<ItemAnalytic> findAll();
 }

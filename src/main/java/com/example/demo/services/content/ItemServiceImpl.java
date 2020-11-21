@@ -86,13 +86,13 @@ class ItemServiceImpl implements ItemService{
         return ResponseEntity.ok(new CartResponse(user.getCart().keySet(), user.getCart().values()));
     }
 
-    public ResponseEntity<?> buyItems(ArrayList<Item> items) {
+    public ResponseEntity<?> buyItems(ArrayList<Item> items, String userEmail) {
             items.forEach(item -> {
                 Optional<SoldItem> soldItemOptional = soldItemRepository.findByItemId(item.getItemId());
                 ItemAnalytic itemAnalytic = ItemAnalytic.builder()
                         .itemName(item.getItemName())
                         .quantity(item.getAddedToCart())
-                        .timeWhenSold(LocalDateTime.now().minusHours(7))
+                        .timeWhenSold(LocalDateTime.now())
                         .soldItemId(item.getItemId())
                         .build();
                 if (soldItemOptional.isPresent()){
@@ -111,6 +111,7 @@ class ItemServiceImpl implements ItemService{
                 itemAnalyticRepository.save(itemAnalytic);
                 soldItemRepository.save(soldItemOptional.get());
             });
+            userRepository.findByEmailIgnoreCase(userEmail).setCart(Collections.emptyMap());
         return ResponseEntity.ok(new MessageResponse("Items sold"));
 
     }

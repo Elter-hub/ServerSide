@@ -14,7 +14,7 @@ public interface ItemService {
      void postItem(PostItemRequest item);
      ResponseEntity<?> addItem(String userEmail, Long itemId, boolean addOrRemove);
      ResponseEntity<?> removeItem(String userEmail, Long itemId);
-     ResponseEntity<?> buyItems(ArrayList<Item> items);
+     ResponseEntity<?> buyItems(ArrayList<Item> items, String userEmail);
      Item promoteItem(Item item, Integer newPrice);
      Item cancelPromoteItem(Item item);
      void deleteItem(Item item);

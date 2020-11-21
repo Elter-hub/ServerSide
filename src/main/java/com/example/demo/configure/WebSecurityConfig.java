@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -38,6 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.authEntryPointJwt = authEntryPointJwt;
         this.PERMIT_ALL = environment.getProperty("app.security.permitAll").split(", ");
         this.AUTH_ADMIN_WHITELIST = environment.getProperty("app.security.admin").split(", ");
+        System.out.println("🥰");
+        System.out.println(Arrays.toString(AUTH_ADMIN_WHITELIST));
+        System.out.println("🥰");
+
     }
 
     @Bean
@@ -73,8 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers(PERMIT_ALL).permitAll()
-                    .antMatchers(AUTH_ADMIN_WHITELIST).hasRole("ADMIN")
+                .antMatchers(AUTH_ADMIN_WHITELIST).hasRole("ADMIN")
+                .antMatchers(PERMIT_ALL).permitAll()
                     .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

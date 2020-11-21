@@ -26,7 +26,7 @@ public class PaymentController {
     @PostMapping("/charge")
     @Transactional
     public Charge chargeCard(HttpServletRequest request, @RequestBody BuyItemsRequest items) throws Exception {
-        itemService.buyItems(items.getItems());
+        itemService.buyItems(items.getItems(), request.getHeader("email"));
         String token = request.getHeader("token");
         Double amount = Double.parseDouble(request.getHeader("amount"));
 //        itemService.buyItems(request.getHeader("email"), items.getItems(), items.getQuantities());

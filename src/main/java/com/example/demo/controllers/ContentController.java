@@ -8,6 +8,7 @@ import com.example.demo.services.content.ItemService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -42,9 +43,9 @@ public class ContentController {
     }
 
     @Transactional
-    @PostMapping("/delete-item")
-    void deleteItem(@RequestBody ChangeItemRequest item){
-        this.itemService.deleteItem(item.getItem());
+    @DeleteMapping("/delete-item")
+    void deleteItem(HttpServletRequest request){
+        this.itemService.deleteItem(request.getHeader("itemId"));
     }
 
     @PatchMapping("/change-quantity-item")

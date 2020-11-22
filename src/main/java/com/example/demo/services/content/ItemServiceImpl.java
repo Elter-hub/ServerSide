@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,12 +28,14 @@ class ItemServiceImpl implements ItemService{
     private final UserRepository userRepository;
     private final SoldItemRepository soldItemRepository;
     private final ItemAnalyticRepository itemAnalyticRepository;
+    private final EntityManager entityManager;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, Environment environment, SoldItemRepository soldItemRepository, ItemAnalyticRepository itemAnalyticRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, Environment environment, SoldItemRepository soldItemRepository, ItemAnalyticRepository itemAnalyticRepository, EntityManager entityManager) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.soldItemRepository = soldItemRepository;
         this.itemAnalyticRepository = itemAnalyticRepository;
+        this.entityManager = entityManager;
     }
 
     public List<Item> getAllItems() {
@@ -133,8 +136,8 @@ class ItemServiceImpl implements ItemService{
     }
 
     @Transactional
-    public void deleteItem(Item item) {
-        itemRepository.deleteByItemId(item.getItemId());
+    public void deleteItem(String itemId) {
+        itemRepository.deleteByItemId(Long.valueOf(itemId));
     }
 
     public Item changeItemQuantity(Item item, Integer quantity) {

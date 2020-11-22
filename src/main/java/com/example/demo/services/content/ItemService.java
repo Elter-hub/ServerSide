@@ -17,7 +17,7 @@ public interface ItemService {
      ResponseEntity<?> buyItems(ArrayList<Item> items, String userEmail);
      Item promoteItem(Item item, Integer newPrice);
      Item cancelPromoteItem(Item item);
-     void deleteItem(Item item);
+     void deleteItem(String  itemId);
      Item changeItemQuantity(Item item, Integer quantity);
 
 
